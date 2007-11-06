@@ -26,3 +26,6 @@ Nro.        Descripcion
  24         La cantidad de lugares libres es menor a cero. [24]
  25         La fecha menor debería ser mas chica que la fecha mayor. [25]
  26         No existe el id del recorrido indicado. [26]
+ 27	    No existe el usuario destino. [27]
+ 28	    No existe el usuario remitente. [28]
+ 29 	    No se indico el asunto del mensaje. [29]
