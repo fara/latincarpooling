@@ -64,7 +64,7 @@ document
 'Resultados:        ID del nuevo mensaje                                                ',
 '                                                                                       ',
 'Errores Reportados:                                                                    ',
-'                   -	No existe el usuario remitente.                                 ',
+'                    -	No existe el usuario remitente.                                 ',
 '                    -	No existe el usuario destinatario.                              ',
 '                    -	No se ingresó el asunto.                                        ',
 '                                                                                       ',
