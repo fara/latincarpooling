@@ -1,5 +1,4 @@
-drop procedure dbo.spi_mensaje_crear
-;
+drop procedure dbo.spi_mensaje_crear;
 create procedure dbo.spi_mensaje_crear
 (
     id_dest     integer,
