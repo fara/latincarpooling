@@ -1,8 +1,8 @@
 drop procedure dbo.spi_mensaje_crear;
 create procedure dbo.spi_mensaje_crear
 (
-    id_dest     LIKE mje_id,
-    id_rem      LIKE mje_id,
+    id_dest     LIKE mje_uio_id_dest,
+    id_rem      LIKE mje_uio_id_rem,
     asunto      LIKE mje_asunto,    
     texto       LIKE mje_texto    
 ) returns integer;
