@@ -29,3 +29,4 @@ Nro.        Descripcion
  27	    No existe el usuario destino. [27]
  28	    No existe el usuario remitente. [28]
  29 	    No se indico el asunto del mensaje. [29]
+ 30	    No existe el mensaje. [30]
