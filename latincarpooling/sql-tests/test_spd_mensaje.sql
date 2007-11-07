@@ -9,3 +9,6 @@ execute procedure spd_mensaje(666,666,50,666);
 
 -- El mensaje no puede ser borrado. Debe ser el usuario destinatario para poder hacerlo
 execute procedure spd_mensaje(666,666,1,111);
+
+-- Ejecuta OK
+execute procedure spd_mensaje(666,666,1,666);
