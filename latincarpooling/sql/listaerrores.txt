@@ -31,3 +31,5 @@ Nro.        Descripcion
  29 	    No se indico el asunto del mensaje. [29]
  30	    No existe el mensaje. [30]
  31         El mensaje no puede ser borrado. Debe ser el usuario destinatario para poder hacerlo [31]
+ 32         Ya paso por ciudad. [32]
+ 
