@@ -3,7 +3,7 @@ create procedure dbo.spi_mensaje_crear
 (
      id_dest     integer,
      id_rem      integer,
-     asunto      varchar,
+     asunto      varchar(255),
      texto       blob
 )
 returns integer;
