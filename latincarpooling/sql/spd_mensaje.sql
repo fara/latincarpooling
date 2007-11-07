@@ -1,12 +1,12 @@
 drop procedure spd_mensaje;
 create procedure spd_mensaje
 (
-    id_dest     LIKE mje_uio_id_dest,
-    id_rem      LIKE mje_uio_id_rem,
-    id_mje      LIKE mje_id,
-    id_actual   LIKE mje_uio_id_dest   
+    id_dest     integer,
+    id_rem      integer,
+    id_mje      integer,
+    id_actual   integer   
 
-) RETURNING integer;
+) returns integer;
 
     if not exists (select 1
                     from usuario u
@@ -35,13 +35,13 @@ create procedure spd_mensaje
     end if;
 
     
-    begin    
+    
         delete from mensaje
         where mje_id = id_mje and
               mje_uio_id_dest = id_dest and
-              mje_uio_id_rem = id_rem
-    end;
-RETURN 0;
+              mje_uio_id_rem = id_rem;
+
+    return 0;
 end procedure
 document
 'Fecha de Creacion: 2007-11-05                                                          ',
@@ -63,7 +63,7 @@ document
 '                    -	No existe el usuario remitente.                                 ',
 '                    -	No existe el usuario destinatario.                              ',
 '                    -	No existe el mensaje.                                           ',
-'                    -  El mensaje no puede ser borrado. Debe ser el usuario            ','
+'                    -  El mensaje no puede ser borrado. Debe ser el usuario            ',
 '                       destinatario para poder hacerlo.                                ',
 '                                                                                       ',
 with listing in 'informix_warn'
