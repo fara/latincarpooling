@@ -1,24 +1,22 @@
 drop procedure sps_mensajes_envi;
 create procedure sps_mensajes_envi
 (
-    id_rem     LIKE mje_uio_id_rem,
+    id_rem     integer
 
-) RETURNING INTEGER, INTEGER, BOOLEAN, DATE, VARCHAR;
+) returns INTEGER, INTEGER, BOOLEAN, DATE, VARCHAR;
 
-    if not exists (select 1
-                    from usuario u
-                    where u.uio_id = id_rem) then
-       RAISE EXCEPTION -746, 0, 'No existe el usuario remitente. [28]';
-       return -1;
-    end if;
-
-    begin
         define dest   like mensaje.mje_uio_id_dest;
         define id_mje like mensaje.mje_id;
         define leido like mensaje.mje_fueleido;
         define fecha like mensaje.mje_fecha;
         define asunto like mensaje.mje_asunto;
 
+    if not exists (select 1
+                    from usuario u
+                    where u.uio_id = id_rem) then
+       RAISE EXCEPTION -746, 0, 'No existe el usuario remitente. [28]';
+       return -1, -1, 'f', 0000-00-00, '';
+    end if;
         
 	FOREACH
         SELECT mje_uio_id_dest, mje_id, mje_fueleido, mje_fecha, mje_asunto 
