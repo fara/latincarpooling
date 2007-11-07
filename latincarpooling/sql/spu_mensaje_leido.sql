@@ -1,11 +1,11 @@
 drop procedure spu_mensaje_leido;
 create procedure spu_mensaje_leido
 (
-    id_dest     LIKE mje_uio_id_dest,
-    id_rem      LIKE mje_uio_id_rem,
-    id_mje      LIKE mje_id    
+    id_dest     integer,
+    id_rem      integer,
+    id_mje      integer    
 
-) RETURNING DATE, VARCHAR, BOOLEAN, BLOB;
+) returns integer;
 
     if not exists (select 1
                     from usuario u
@@ -32,7 +32,7 @@ create procedure spu_mensaje_leido
     begin    
         update mensaje
         set mje_fueleido = 't'
-	where mje_id = id_mje
+	where mje_id = id_mje;
     end;
 RETURN 0;
 end procedure
