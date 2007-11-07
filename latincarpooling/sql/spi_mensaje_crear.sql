@@ -44,3 +44,27 @@ returns integer;
 
     return nuevo_id;
 end procedure
+document
+'Fecha de Creacion: 2007-11-05                                                          ',
+'                                                                                       ',
+'Autor:             GMarcello                                                           ',
+'                                                                                       ',
+'Parametros:                                                                            ',
+'                   id_dest            ID del detinatario                               ',
+'                   id_rem             ID del remitente                                 ',
+'                   asunto             Asunto del mensaje                               ',
+'                   texto              Cuerpo del mensaje                               ',
+'                                                                                       ',
+'Descripcion:       Crea un nuevo mensaje con el asunto y el texto enviado.             ',
+'                   La fecha del mismo será la del momento es que es guardado en la     ',
+'                   base de datos. Inicialmente será marcado como no leído.             ',
+'                                                                                       ',
+'Resultados:        ID del nuevo mensaje                                                ',
+'                                                                                       ',
+'Errores Reportados:                                                                    ',
+'                    -	No existe el usuario remitente.                                 ',
+'                    -	No existe el usuario destinatario.                              ',
+'                    -	No se ingresó el asunto.                                        ',
+'                                                                                       ',
+with listing in 'informix_warn'
+;
