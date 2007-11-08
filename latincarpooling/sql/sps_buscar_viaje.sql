@@ -1,13 +1,13 @@
 -- sps_buscar_viaje
-drop procedure dbo.sps_buscar_viaje;
+drop procedure sps_buscar_viaje;
 
-create procedure dbo.sps_buscar_viaje
+create procedure sps_buscar_viaje
 (
     id_ciudad_origen LIKE ciudad.cad_id,
     id_ciudad_destino LIKE ciudad.cad_id
 ) RETURNING integer;
 
-    DEFINE id_viaje LIKE dbo.viaje.vje_id;
+    DEFINE id_viaje LIKE viaje.vje_id;
 
     if not exists (select 1 from ciudad where cad_id = id_ciudad_origen) then
        RAISE EXCEPTION -746, 0, 'La ciudad origen no existe. [20]';

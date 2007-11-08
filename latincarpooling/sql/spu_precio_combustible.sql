@@ -1,6 +1,6 @@
-drop procedure dbo.spu_precio_combustible
+drop procedure spu_precio_combustible
 ;
-create procedure dbo.spu_precio_combustible
+create procedure spu_precio_combustible
 (
     id_combustible   integer,
     id_pais     integer,
@@ -82,7 +82,7 @@ create procedure dbo.spu_precio_combustible
         (id_combustible, id_pais, vigente_desde, precio_litro, vigencia_hasta);
     end;
     end if;
-	
+        
     return 0;
 end procedure
 document

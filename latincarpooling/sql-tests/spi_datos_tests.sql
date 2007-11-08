@@ -1,7 +1,7 @@
 -- Este procedimento debe correrse por unica vez y realiza la carga de los
 -- datos requeridos para las pruebas.
 
-create procedure dbo.spi_datos_tests ();
+create procedure spi_datos_tests ();
     --Agregamos el usuario de prueba
     if not exists (select 1
                 from usuario
@@ -57,12 +57,12 @@ create procedure dbo.spi_datos_tests ();
     --Agregamos los recorridos de prueba.
     if not exists (select 1
                 from recorrido) then
-       insert into dbo.recorrido
+       insert into recorrido
        (rdo_id, rdo_cad_id_origen, rdo_cad_id_destino)
        select tra_id, tra_cad_id1, tra_cad_id2
        from tramo;
 
-       insert into dbo.ordenrecorrido
+       insert into ordenrecorrido
        (oro_rdo_id, oro_tra_id, oro_ordentramo)
        select tra_id, tra_id, 1
        from tramo;
@@ -112,7 +112,7 @@ document
 '                                                                                       '
 with listing in 'informix_warn'
 ;
-execute procedure dbo.spi_datos_tests()
+execute procedure spi_datos_tests()
 ;
-drop procedure dbo.spi_datos_tests
+drop procedure spi_datos_tests
 ;

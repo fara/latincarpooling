@@ -1,5 +1,5 @@
-drop procedure dbo.spi_mensaje_crear;
-create procedure dbo.spi_mensaje_crear
+drop procedure spi_mensaje_crear;
+create procedure spi_mensaje_crear
 (
      id_dest     integer,
      id_rem      integer,
@@ -37,7 +37,7 @@ returns integer;
         let nuevo_id = ultimo_id + 1;
 
 
-         INSERT INTO dbo.mensaje
+         INSERT INTO mensaje
          (mje_id, mje_fecha, mje_asunto, mje_texto, mje_fueleido,mje_uio_id_dest, mje_uio_id_rem)
          values (nuevo_id, today, asunto, texto, 'f', id_dest, id_rem);
 
@@ -62,9 +62,9 @@ document
 'Resultados:        ID del nuevo mensaje                                                ',
 '                                                                                       ',
 'Errores Reportados:                                                                    ',
-'                    -	No existe el usuario remitente.                                 ',
-'                    -	No existe el usuario destinatario.                              ',
-'                    -	No se ingresó el asunto.                                        ',
+'                    -  No existe el usuario remitente.                                 ',
+'                    -  No existe el usuario destinatario.                              ',
+'                    -  No se ingresó el asunto.                                        ',
 '                                                                                       ',
 with listing in 'informix_warn'
 ;

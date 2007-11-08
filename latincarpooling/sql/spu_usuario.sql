@@ -1,7 +1,7 @@
-drop procedure dbo.spu_usuario;
-create procedure dbo.spu_usuario
+drop procedure spu_usuario;
+create procedure spu_usuario
 (
-    id_usuario	            int,
+    id_usuario              int,
     nombre                  char(50),
     apellido                char(50),
     alias_usuario           char(20),
@@ -12,7 +12,7 @@ create procedure dbo.spu_usuario
     telefono_celular        char(25),
     telefono_laboral        char(25),
     es_fumador              boolean,
-    sexo	            char(1),
+    sexo                    char(1),
     direccion_calle         varchar(100),
     direccion_altura        int,
     direccion_piso          smallint,
@@ -79,11 +79,11 @@ create procedure dbo.spu_usuario
 
     let mail_viejo = (select u.uio_email
         from usuario u
-	where uio_id = id_usuario);
+        where uio_id = id_usuario);
 
    update usuario set
-	    uio_id = id_usuario,
-	    uio_nombreusuario = nombre,
+            uio_id = id_usuario,
+            uio_nombreusuario = nombre,
             uio_apellido = apellido,
             uio_nombre = alias_usuario,
             uio_contrasena = contrasena,
@@ -94,7 +94,7 @@ create procedure dbo.spu_usuario
             uio_telcelular = telefono_celular,
             uio_tellaboral = telefono_laboral,
             uio_esfumador = es_fumador,
-	    uio_sexo = sexo,
+            uio_sexo = sexo,
             uio_calle = direccion_calle,
             uio_callealtura = direccion_altura,
             uio_piso = direccion_piso,
@@ -106,7 +106,7 @@ create procedure dbo.spu_usuario
             uio_nacionalidad = nacionalidad,
             uio_info_visible = publicar_datos,
             uio_foto = foto
-	where uio_id = id_usuario;
+        where uio_id = id_usuario;
 
     if mail_viejo = email then
         return '';   
@@ -131,7 +131,7 @@ document
 '                   telefono_celular            Telefono celular                        ',
 '                   telefono_laboral            Telefono laboral                        ',
 '                   es_fumador                  Si el usuario es fumador                ',
-'                   sexo	                Sexo			                ',
+'                   sexo                        Sexo                                    ',
 '                   direccion_calle             Domicilio - Calle                       ',
 '                   direccion_altura            Domicilio - Altura                      ',
 '                   direccion_piso              Domicilio - Piso                        ',

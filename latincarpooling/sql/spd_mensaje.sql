@@ -1,10 +1,11 @@
-drop procedure spd_mensaje;
+drop procedure spd_mensaje
+;
 create procedure spd_mensaje
 (
     id_dest     integer,
     id_rem      integer,
     id_mje      integer,
-    id_actual   integer   
+    id_actual   integer
 
 ) returns integer;
 
@@ -14,7 +15,7 @@ create procedure spd_mensaje
        RAISE EXCEPTION -746, 0, 'No existe el usuario destino. [27]';
        return -1;
     end if;
-    
+
     if not exists (select 1
                     from usuario u
                     where u.uio_id = id_rem) then
@@ -34,8 +35,8 @@ create procedure spd_mensaje
        return -1;
     end if;
 
-    
-    
+
+
         delete from mensaje
         where mje_id = id_mje and
               mje_uio_id_dest = id_dest and
@@ -60,9 +61,9 @@ document
 'Resultados:        Cero si no hay errores                                              ',
 '                                                                                       ',
 'Errores Reportados:                                                                    ',
-'                    -	No existe el usuario remitente.                                 ',
-'                    -	No existe el usuario destinatario.                              ',
-'                    -	No existe el mensaje.                                           ',
+'                    -  No existe el usuario remitente.                                 ',
+'                    -  No existe el usuario destinatario.                              ',
+'                    -  No existe el mensaje.                                           ',
 '                    -  El mensaje no puede ser borrado. Debe ser el usuario            ',
 '                       destinatario para poder hacerlo.                                ',
 '                                                                                       ',

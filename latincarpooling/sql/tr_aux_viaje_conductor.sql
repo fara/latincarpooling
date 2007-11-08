@@ -1,7 +1,7 @@
 -- spu_informar_pasajeros
-DROP PROCEDURE dbo.spu_informar_pasajeros;
+DROP PROCEDURE spu_informar_pasajeros;
 
-CREATE PROCEDURE dbo.spu_informar_pasajeros
+CREATE PROCEDURE spu_informar_pasajeros
 (
     id_viaje LIKE viaje.vje_id,
     id_conductor LIKE viajeconductor.vcr_uio_id,
@@ -31,8 +31,8 @@ CREATE PROCEDURE dbo.spu_informar_pasajeros
             vje_fechamenor <= fecha_mayor AND vje_fechamayor >= fecha_menor AND
             lugares_libres > 0
 
-        CALL dbo.spi_mensaje_crear(receptor, id_conductor, 'Viaje recibido',
-            FILETOBLOB('E:\1.txt', 'server')) RETURNING id_mensaje;
+        CALL spi_mensaje_crear(receptor, id_conductor, 'Viaje recibido',
+            null) RETURNING id_mensaje;
 
     END FOREACH;
 

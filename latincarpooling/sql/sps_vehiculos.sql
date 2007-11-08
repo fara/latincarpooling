@@ -1,17 +1,17 @@
-drop procedure dbo.sps_vehiculos;
-create procedure dbo.sps_vehiculos
+drop procedure sps_vehiculos;
+create procedure sps_vehiculos
 (
     id_usuario  integer
 ) returning integer, char(30), char(30), char(30), integer, numeric(6,2), boolean, smallint;
 
-    DEFINE id LIKE dbo.vehiculo.vlo_id;
-    DEFINE modelo LIKE dbo.vehiculo.vlo_modelo;
-    DEFINE color LIKE dbo.vehiculo.vlo_color;
-    DEFINE patente LIKE dbo.vehiculo.vlo_patente;
-    DEFINE cle_id LIKE dbo.vehiculo.vlo_cle_id;
-    DEFINE consumo LIKE dbo.vehiculo.vlo_consumo;
-    DEFINE tieneac LIKE dbo.vehiculo.vlo_tieneac;
-    DEFINE asientos LIKE dbo.vehiculo.vlo_asientos;
+    DEFINE id LIKE vehiculo.vlo_id;
+    DEFINE modelo LIKE vehiculo.vlo_modelo;
+    DEFINE color LIKE vehiculo.vlo_color;
+    DEFINE patente LIKE vehiculo.vlo_patente;
+    DEFINE cle_id LIKE vehiculo.vlo_cle_id;
+    DEFINE consumo LIKE vehiculo.vlo_consumo;
+    DEFINE tieneac LIKE vehiculo.vlo_tieneac;
+    DEFINE asientos LIKE vehiculo.vlo_asientos;
 
     if id_usuario is null or id_usuario = '' then
        RAISE EXCEPTION -746, 0, 'No se indico el id de usuario. [3]';

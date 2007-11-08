@@ -1,6 +1,6 @@
-drop procedure dbo.spd_viajes_realizados
+drop procedure spd_viajes_realizados
 ;
-create procedure dbo.spd_viajes_realizados
+create procedure spd_viajes_realizados
 (
     fecha_corte date
 ) returns integer;

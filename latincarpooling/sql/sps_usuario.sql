@@ -1,5 +1,5 @@
-drop procedure dbo.sps_usuario;
-create procedure dbo.sps_usuario
+drop procedure sps_usuario;
+create procedure sps_usuario
 (
     id_usuario integer
 ) returning int, char(50), char(50), char(20), varchar(255), varchar(255), char(25), char(25), char(25), char(1), boolean, varchar(100), int, char(4), char(20), char(11), char(25), boolean, int, int, boolean, blob, smallint, smallint;
@@ -43,22 +43,22 @@ create procedure dbo.sps_usuario
 
     FOREACH
         SELECT uio_id,uio_nombre,uio_apellido,uio_nombreusuario,uio_contrasena,
-		uio_email,uio_telpersonal,uio_tellaboral,uio_telcelular,uio_sexo,
-		uio_esfumador,uio_calle,uio_callealtura,uio_departamento,uio_codigopostal,
-		uio_numerodoc,uio_nacionalidad,uio_info_visible,uio_tdo_id,uio_cad_id,
-		uio_mailverificado,uio_foto,uio_chequeofrec,uio_piso
+                uio_email,uio_telpersonal,uio_tellaboral,uio_telcelular,uio_sexo,
+                uio_esfumador,uio_calle,uio_callealtura,uio_departamento,uio_codigopostal,
+                uio_numerodoc,uio_nacionalidad,uio_info_visible,uio_tdo_id,uio_cad_id,
+                uio_mailverificado,uio_foto,uio_chequeofrec,uio_piso
         INTO id,nombre,apellido,nombreusuario,contrasena,
-		email,telpersonal,tellaboral,telcelular,sexo,
-		esfumador,calle,callealtura,departamento,codigopostal,
-		numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
-		mailverificado,foto,chequeofrec,piso
+                email,telpersonal,tellaboral,telcelular,sexo,
+                esfumador,calle,callealtura,departamento,codigopostal,
+                numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
+                mailverificado,foto,chequeofrec,piso
         FROM usuario
         WHERE uio_id = id_usuario
         RETURN id,nombre,apellido,nombreusuario,contrasena,
-		email,telpersonal,tellaboral,telcelular,sexo,
-		esfumador,calle,callealtura,departamento,codigopostal,
-		numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
-		mailverificado,foto,chequeofrec,piso
+                email,telpersonal,tellaboral,telcelular,sexo,
+                esfumador,calle,callealtura,departamento,codigopostal,
+                numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
+                mailverificado,foto,chequeofrec,piso
         WITH RESUME;
     END FOREACH;
 

@@ -1,6 +1,6 @@
-drop procedure dbo.sps_verificar_usuario
+drop procedure sps_verificar_usuario
 ;
-create procedure dbo.sps_verificar_usuario
+create procedure sps_verificar_usuario
 (
     nombre_usuario char(20),
     contrasena_hash char(255)

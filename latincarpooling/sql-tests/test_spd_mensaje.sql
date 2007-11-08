@@ -11,4 +11,4 @@ execute procedure spd_mensaje(666,666,50,666);
 execute procedure spd_mensaje(666,666,1,111);
 
 -- Ejecuta OK
-execute procedure spd_mensaje(666,666,1,666);
+execute procedure spd_mensaje(666,666,8,666);

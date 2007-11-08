@@ -1,6 +1,6 @@
-drop procedure dbo.spu_valor_cambio
+drop procedure spu_valor_cambio
 ;
-create procedure dbo.spu_valor_cambio
+create procedure spu_valor_cambio
 (
     id_moneda   integer,
     vigente_desde date,

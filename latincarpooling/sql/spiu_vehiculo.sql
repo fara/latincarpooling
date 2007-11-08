@@ -1,5 +1,5 @@
-drop procedure dbo.spiu_vehiculo;
-create procedure dbo.spiu_vehiculo
+drop procedure spiu_vehiculo;
+create procedure spiu_vehiculo
 (
     id_usuario          int,
     id_vehiculo         int,
@@ -91,7 +91,7 @@ create procedure dbo.spiu_vehiculo
         begin
         insert into vehiculo
         (vlo_id,
-	vlo_uio_id,
+        vlo_uio_id,
         vlo_modelo,
         vlo_color,
         vlo_patente,
@@ -101,7 +101,7 @@ create procedure dbo.spiu_vehiculo
         vlo_asientos
         ) values
         (id_vehiculo,
-	id_usuario,
+        id_usuario,
         modelo,
         color,
         patente,

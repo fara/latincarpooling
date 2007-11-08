@@ -1,7 +1,7 @@
 drop procedure dbo.spi_usuario;
 create procedure dbo.spi_usuario
 (
-    id_usuario	            int,
+    id_usuario              int,
     nombre                  char(50),
     apellido                char(50),
     alias_usuario           char(20),
@@ -12,7 +12,7 @@ create procedure dbo.spi_usuario
     telefono_celular        char(25),
     telefono_laboral        char(25),
     es_fumador              boolean,
-    sexo	            char(1),
+    sexo                    char(1),
     direccion_calle         varchar(100),
     direccion_altura        int,
     direccion_piso          smallint,
@@ -76,7 +76,7 @@ create procedure dbo.spi_usuario
 
    insert into usuario
         (   uio_id,
-	    uio_nombreusuario,
+            uio_nombreusuario,
             uio_apellido,
             uio_nombre,
             uio_contrasena,
@@ -87,7 +87,7 @@ create procedure dbo.spi_usuario
             uio_telcelular,
             uio_tellaboral,
             uio_esfumador,
-	    uio_sexo,
+            uio_sexo,
             uio_calle,
             uio_callealtura,
             uio_piso,
@@ -101,7 +101,7 @@ create procedure dbo.spi_usuario
             uio_foto
         ) values
         (   id_usuario,
-	    nombre,
+            nombre,
             apellido,
             alias_usuario,
             contrasena,
@@ -112,7 +112,7 @@ create procedure dbo.spi_usuario
             telefono_celular,
             telefono_laboral,
             es_fumador,
-	    sexo,
+            sexo,
             direccion_calle,
             direccion_altura,
             direccion_piso,
@@ -144,7 +144,7 @@ document
 '                   telefono_celular            Telefono celular                        ',
 '                   telefono_laboral            Telefono laboral                        ',
 '                   es_fumador                  Si el usuario es fumador                ',
-'                   sexo	                Sexo			                ',
+'                   sexo                        Sexo                                    ',
 '                   direccion_calle             Domicilio - Calle                       ',
 '                   direccion_altura            Domicilio - Altura                      ',
 '                   direccion_piso              Domicilio - Piso                        ',

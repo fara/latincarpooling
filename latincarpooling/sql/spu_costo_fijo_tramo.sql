@@ -1,6 +1,6 @@
-drop procedure dbo.spu_costo_fijo_tramo
+drop procedure spu_costo_fijo_tramo
 ;
-create procedure dbo.spu_costo_fijo_tramo
+create procedure spu_costo_fijo_tramo
 (
     id_tramo   integer,
     vigente_desde date,

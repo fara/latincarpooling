@@ -1,14 +1,14 @@
 -- sps_usuarios_mensajeria
-drop procedure dbo.sps_usuarios_mensajeria;
+drop procedure sps_usuarios_mensajeria;
 
-create procedure dbo.sps_usuarios_mensajeria
+create procedure sps_usuarios_mensajeria
 (
     id_usuario LIKE usuario.uio_id
 ) RETURNING CHAR(30), INTEGER, CHAR(25);
 
-    DEFINE nombre_usuario LIKE dbo.usuariomensajeria.uma_nombreusuario;
-    DEFINE id_programa LIKE dbo.programamensajeria.pma_id;
-    DEFINE nombre_programa LIKE dbo.programamensajeria.pma_nombre;
+    DEFINE nombre_usuario LIKE usuariomensajeria.uma_nombreusuario;
+    DEFINE id_programa LIKE programamensajeria.pma_id;
+    DEFINE nombre_programa LIKE programamensajeria.pma_nombre;
 
     if not exists (select 1 from usuario where uio_id = id_usuario) then
        RAISE EXCEPTION -746, 0, 'No existe el usuario. [1]';

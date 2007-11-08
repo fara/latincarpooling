@@ -9,3 +9,6 @@ execute procedure spu_mensaje_leido(666,666,50);
 
 -- Ejecuta OK
 execute procedure spu_mensaje_leido(666,666,1);
+
+-- lo muestro
+select * from mensaje where mje_id = 1;
