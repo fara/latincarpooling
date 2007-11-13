@@ -22,8 +22,7 @@ create procedure spu_usuario
     tipo_documento_id       int,
     numero_documento        char(11),
     nacionalidad            char(25),
-    publicar_datos          boolean,
-    foto                    blob
+    publicar_datos          boolean
 ) returns char(20);
 
     DEFINE token char(20);
@@ -104,8 +103,7 @@ create procedure spu_usuario
             uio_tdo_id = tipo_documento_id,
             uio_numerodoc = numero_documento,
             uio_nacionalidad = nacionalidad,
-            uio_info_visible = publicar_datos,
-            uio_foto = foto
+            uio_info_visible = publicar_datos
         where uio_id = id_usuario;
 
     if mail_viejo = email then
@@ -142,7 +140,6 @@ document
 '                   numero_documento            Numero de documento                     ',
 '                   nacionalidad                Nacionalidad                            ',
 '                   publicar_datos              Si desea publicar sus datos             ',
-'                   foto                        Foto                                    ',
 '                                                                                       ',
 'Descripcion:       Se crea un nuevo registro en la tabla de usuarios con los datos     ',
 '                   proporcionados.                                                     ',

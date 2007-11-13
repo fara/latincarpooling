@@ -1,7 +1,6 @@
-drop procedure dbo.spi_usuario;
-create procedure dbo.spi_usuario
+drop procedure spi_usuario;
+create procedure spi_usuario
 (
-    id_usuario              int,
     nombre                  char(50),
     apellido                char(50),
     alias_usuario           char(20),
@@ -12,7 +11,7 @@ create procedure dbo.spi_usuario
     telefono_celular        char(25),
     telefono_laboral        char(25),
     es_fumador              boolean,
-    sexo                    char(1),
+    sexo	            char(1),
     direccion_calle         varchar(100),
     direccion_altura        int,
     direccion_piso          smallint,
@@ -22,9 +21,11 @@ create procedure dbo.spi_usuario
     tipo_documento_id       int,
     numero_documento        char(11),
     nacionalidad            char(25),
-    publicar_datos          boolean,
-    foto                    blob
+    publicar_datos          boolean
 ) returns char(20);
+
+    define nuevo_id like usuario.uio_id;
+    define ultimo_id like usuario.uio_id;
 
 --  VALIDACION DE PARAMETROS OBLIGATORIOS
     if nombre is null or nombre = '' then
@@ -69,14 +70,20 @@ create procedure dbo.spi_usuario
     end if;
 
     if exists (select 1 from usuario u
-                    where u.uio_nombre = alias_usuario) then
+                    where u.uio_nombreusuario = alias_usuario) then
        RAISE EXCEPTION -746, 0, 'Ya existe el usuario. [1]';
        return -1;
     end if;
 
+  --obtengo el último id
+        let ultimo_id = (select max(uio_id) from usuario);
+
+  --lo incremento en 1
+        let nuevo_id = ultimo_id + 1;
+
    insert into usuario
         (   uio_id,
-            uio_nombreusuario,
+	    uio_nombreusuario,
             uio_apellido,
             uio_nombre,
             uio_contrasena,
@@ -87,7 +94,7 @@ create procedure dbo.spi_usuario
             uio_telcelular,
             uio_tellaboral,
             uio_esfumador,
-            uio_sexo,
+	    uio_sexo,
             uio_calle,
             uio_callealtura,
             uio_piso,
@@ -97,13 +104,12 @@ create procedure dbo.spi_usuario
             uio_tdo_id,
             uio_numerodoc,
             uio_nacionalidad,
-            uio_info_visible,
-            uio_foto
+            uio_info_visible
         ) values
-        (   id_usuario,
-            nombre,
+        (   nuevo_id,
+	    alias_usuario,
             apellido,
-            alias_usuario,
+            nombre,
             contrasena,
             email,
             'f',
@@ -112,7 +118,7 @@ create procedure dbo.spi_usuario
             telefono_celular,
             telefono_laboral,
             es_fumador,
-            sexo,
+	    sexo,
             direccion_calle,
             direccion_altura,
             direccion_piso,
@@ -122,8 +128,7 @@ create procedure dbo.spi_usuario
             tipo_documento_id,
             numero_documento,
             nacionalidad,
-            publicar_datos,
-            foto);
+            publicar_datos);
 
     return alias_usuario;
 end procedure
@@ -144,7 +149,7 @@ document
 '                   telefono_celular            Telefono celular                        ',
 '                   telefono_laboral            Telefono laboral                        ',
 '                   es_fumador                  Si el usuario es fumador                ',
-'                   sexo                        Sexo                                    ',
+'                   sexo	                Sexo			                ',
 '                   direccion_calle             Domicilio - Calle                       ',
 '                   direccion_altura            Domicilio - Altura                      ',
 '                   direccion_piso              Domicilio - Piso                        ',
@@ -155,7 +160,6 @@ document
 '                   numero_documento            Numero de documento                     ',
 '                   nacionalidad                Nacionalidad                            ',
 '                   publicar_datos              Si desea publicar sus datos             ',
-'                   foto                        Foto                                    ',
 '                                                                                       ',
 'Descripcion:       Se crea un nuevo registro en la tabla de usuarios con los datos     ',
 '                   proporcionados.                                                     ',

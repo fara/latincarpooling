@@ -1,5 +1,5 @@
-drop procedure dbo.spd_vehiculo;
-create procedure dbo.spd_vehiculo
+drop procedure spd_vehiculo;
+create procedure spd_vehiculo
 (
     id_vehiculo integer,
     id_usuario integer
