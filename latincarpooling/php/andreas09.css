@@ -279,8 +279,25 @@ letter-spacing:-1px;
 }
 
 .small {font-size:0.8em;}
-.large {font-size:1.4em;}
+.large {font-size:1.4em}
 .center {text-align:center;}
 .right {text-align:right;}
+
+.tituloColumna {
+    font-size:1.1em;
+    font-weight:bold;
+    letter-spacing:-1px;
+	text-align: center;
+	background:#DCDCDC;        
+}
+
+.filaResultado {
+    font-size:1.1em;
+    letter-spacing:-1px;
+	text-align: center;
+	background:#f0f0f0;
+}
+
+
 
 /*** End of file ***/

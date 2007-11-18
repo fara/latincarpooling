@@ -170,16 +170,17 @@ function es_string_fecha_valida($fecha){
 }
 
 
-/*AR 2007-10-27 Devuelve una fecha con el formato definido por la ISO que es compatible con 
-  la mayoria de las bases de datos. Toma como entrada una fecha valida con formato dd/mm/aaaa.
+/*AR 2007-10-27 Devuelve una fecha con el formato que necesita la base.
+    Toma como entrada una fecha valida con formato dd/mm/aaaa.
   En caso de error, devuelve un string vacio.*/  
-function obtener_string_fecha_iso($fecha){
+function obtener_string_fecha_bd($fecha){
 	if (!es_string_fecha_valida($fecha)) {
 	        return '';
 	};
 	list($dia, $mes, $año) = explode("/", $fecha, 3);
-	return $año.$mes.$dia;
+	return $mes.'-'.$dia.'-'.$año;
 }
+
 
 /* Verifica numeros sin espacios */
 function es_numero_entero($string){	
@@ -259,6 +260,98 @@ function print_select_mes ($name, $mesSeleccionado, $estilo) {
     if ($estilo != '') {
         echo '</span>';
     };
+};
+
+function descripcionPais($conexion, $pais) {
+    try {
+                   $resultado = $conexion->query('SELECT pis_nombre from pais where pis_id = '.$pais);
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {
+                        return $fila['pis_nombre'];
+                   };                   
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };
+    return '(Sin Pais)';               
+};
+
+function listaPaises($conexion, $nombreCampo, $paisSeleccionado) {
+    try {
+        echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
+        foreach ($conexion->query('SELECT pis_id, pis_nombre from pais order by pis_nombre') as $row) {
+            if ($paisSeleccionado == $row['pis_id']) {
+                echo '<option value="'.$row['pis_id'].'" selected="selected">'.$row['pis_nombre'].'</option>';
+            } else {
+                echo '<option value="'.$row['pis_id'].'">'.$row['pis_nombre'].'</option>';
+            };
+        };
+        echo '</select>';
+   } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                        
+    };
+};
+
+function descripcionRegion($conexion, $region) {
+    try {
+                   $resultado = $conexion->query('SELECT ron_nombre from region where ron_id = '.$region);
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {
+                        return $fila['ron_nombre'];
+                   };                   
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };
+    return '(Sin Region)';                                  
+};
+
+function listaRegiones($conexion, $nombreCampo, $pais, $regionSeleccionada) {
+    try {
+        echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
+        foreach ($conexion->query('SELECT ron_id, ron_nombre from region where ron_pis_id = '.$pais.' order by ron_nombre') as $row) {
+            if ($regionSeleccionada == $row['ron_id']) {
+                echo '<option value="'.$row['ron_id'].'" selected="selected">'.$row['ron_nombre'].'</option>';
+            } else {
+                echo '<option value="'.$row['ron_id'].'">'.$row['ron_nombre'].'</option>';
+            };
+        };
+        echo '</select>';
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
+    };
+};
+
+function descripcionCiudad($conexion, $ciudad) {
+    try {
+                   $resultado = $conexion->query('SELECT cad_nombre from ciudad where cad_id = '.$ciudad);
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {
+                        return $fila['cad_nombre'];
+                   };
+                   return '(Sin Ciudad)';
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };
+    return '(Sin Ciudad)';                                  
+};
+
+function listaCiudades($conexion, $nombreCampo, $region, $ciudadSeleccionada) {
+    try {
+        echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
+        foreach ($conexion->query('SELECT cad_id, cad_nombre from ciudad where cad_ron_id = '.$region.' order by cad_nombre') as $row) {
+            if ($ciudadSeleccionada == $row['cad_id']) {
+                echo '<option value="'.$row['cad_id'].'" selected="selected">'.$row['cad_nombre'].'</option>';
+            } else {
+                echo '<option value="'.$row['cad_id'].'">'.$row['cad_nombre'].'</option>';
+            };
+        };
+        echo '</select>';
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
+    };
+};
+
+function campoHidden($nombreCampo, $valorCampo) {
+    echo '<input type="hidden" id="'.$nombreCampo.'" name="'.$nombreCampo.'" value="'.$valorCampo.'" />';   
 };
 
 ?>

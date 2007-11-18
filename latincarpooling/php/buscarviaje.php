@@ -6,100 +6,6 @@ carpooling_header("Busqueda de Viajes");
 include 'func_lib.php';
 include 'menu.php';
 
-function descripcionPais($conexion, $pais) {
-    try {
-                   $resultado = $conexion->query('SELECT pis_nombre from pais where pis_id = '.$pais);
-                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
-                   if ($fila != '') {
-                        return $fila['pis_nombre'];
-                   };                   
-    } catch (PDOException $e) {  
-        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
-    };
-    return '(Sin Pais)';               
-};
-
-function listaPaises($conexion, $nombreCampo, $paisSeleccionado) {
-    try {
-        echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
-        foreach ($conexion->query('SELECT pis_id, pis_nombre from pais order by pis_nombre') as $row) {
-            if ($paisSeleccionado == $row['pis_id']) {
-                echo '<option value="'.$row['pis_id'].'" selected="selected">'.$row['pis_nombre'].'</option>';
-            } else {
-                echo '<option value="'.$row['pis_id'].'">'.$row['pis_nombre'].'</option>';
-            };
-        };
-        echo '</select>';
-   } catch (PDOException $e) {  
-        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                        
-    };
-};
-
-function descripcionRegion($conexion, $region) {
-    try {
-                   $resultado = $conexion->query('SELECT ron_nombre from region where ron_id = '.$region);
-                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
-                   if ($fila != '') {
-                        return $fila['ron_nombre'];
-                   };                   
-    } catch (PDOException $e) {  
-        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
-    };
-    return '(Sin Region)';                                  
-};
-
-function listaRegiones($conexion, $nombreCampo, $pais, $regionSeleccionada) {
-    try {
-        echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
-        foreach ($conexion->query('SELECT ron_id, ron_nombre from region where ron_pis_id = '.$pais.' order by ron_nombre') as $row) {
-            if ($regionSeleccionada == $row['ron_id']) {
-                echo '<option value="'.$row['ron_id'].'" selected="selected">'.$row['ron_nombre'].'</option>';
-            } else {
-                echo '<option value="'.$row['ron_id'].'">'.$row['ron_nombre'].'</option>';
-            };
-        };
-        echo '</select>';
-    } catch (PDOException $e) {  
-        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
-    };
-};
-
-function descripcionCiudad($conexion, $ciudad) {
-    try {
-                   $resultado = $conexion->query('SELECT cad_nombre from ciudad where cad_id = '.$ciudad);
-                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
-                   if ($fila != '') {
-                        return $fila['cad_nombre'];
-                   };
-                   return '(Sin Ciudad)';
-    } catch (PDOException $e) {  
-        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
-    };
-    return '(Sin Ciudad)';                                  
-};
-
-function listaCiudades($conexion, $nombreCampo, $region, $ciudadSeleccionada) {
-    try {
-        echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
-        foreach ($conexion->query('SELECT cad_id, cad_nombre from ciudad where cad_ron_id = '.$region.' order by cad_nombre') as $row) {
-            if ($ciudadSeleccionada == $row['cad_id']) {
-                echo '<option value="'.$row['cad_id'].'" selected="selected">'.$row['cad_nombre'].'</option>';
-            } else {
-                echo '<option value="'.$row['cad_id'].'">'.$row['cad_nombre'].'</option>';
-            };
-        };
-        echo '</select>';
-    } catch (PDOException $e) {  
-        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
-    };
-};
-
-function campoHidden($nombreCampo, $valorCampo) {
-    echo '<input type="hidden" id="'.$nombreCampo.'" name="'.$nombreCampo.'" value="'.$valorCampo.'" />';   
-};
-
-
-
 menu();
 ?>
 <div id="content">
@@ -154,7 +60,7 @@ menu();
             $fechaHasta = date('d/m/Y');
         };
         $cantidadLugares = valor_campo('cantidadLugares');
-        if ($cantidadLugares = '') {
+        if ($cantidadLugares == '') {
             $cantidadLugares = 1;
         };
         
@@ -276,27 +182,27 @@ menu();
       /*Si tenemos todos los datos que necesitamos, realizamos la busqueda de viajes.*/
       if ($camposOk != 0) {
         echo '<h1>Viajes encontrados</h1>
-            <table cellpadding="0" cellspacing="2" width="100%" bordercolor="#999999">
-                <tr bgcolor="#DCDCDC">							        
-					<td width="10%"  class="styleTituloColumna">
+            <table cellpadding="1" cellspacing="1" width="100%">
+                <tr Class="tituloColumna">							        
+					<td width="15%">
 	                    Fecha Inicial
 					</td>
-					<td width="10%" class="styleTituloColumna">
+					<td width="15%">
 			            Fecha Final
 				    </td>
-					<td width="20%" class="styleTituloColumna">
+					<td width="10%">
 						Importe
 					</td>					
-					<td width="10%" class="styleTituloColumna">
+					<td width="11%">
 						Lugares Libres
 					</td>					
-					<td width="30%" class="styleTituloColumna">
+					<td width="31%">
 						Conductor
 					</td>							
-					<td width="10%" class="styleTituloColumna">
+					<td width="12%">
 						Sexo
 					</td>		
-					<td width="10%" class="styleTituloColumna">
+					<td width="12%">
 						¿Es Fumador?
 					</td>	
 		        </tr>
@@ -304,6 +210,8 @@ menu();
 		if (!($cantidadLibres >= 1)) {
 		    $cantidadLibres = 1;
 	    };
+	    $cantidadResultados = 0;
+	    	                
         try {                        
             foreach ($conexion->query("
                 select v.vje_id,
@@ -327,11 +235,13 @@ menu();
                     and vc.vcr_lugareslibres >= ".$cantidadLibres."
                 inner join usuario u
                     on vc.vcr_uio_id = u.uio_id
-                where (v.vje_fechamenor <= '".$fechaHasta."' or v.vje_fechamayor >= '".$fechaDesde."')
-                    and v.vje_tipoviaje = 'C'
+                where v.vje_tipoviaje = 'C'
+                and not (v.vje_fechamenor > '".obtener_string_fecha_bd($fechaHasta)."')
+                and not (v.vje_fechamayor < '".obtener_string_fecha_bd($fechaDesde)."')      
                     ")
                as $row) {
-                
+        
+              $cantidadResultados++;        
               if ($row['vcr_importe'] > 0) {
                 $descripcionImporte = '$ '.$row['vcr_importe'].'/pasajero';
               } else {
@@ -349,7 +259,7 @@ menu();
               };
               
               echo '
-                <tr>							        
+                <tr class="filaResultado">							        
 					<td>
 	                    '.$row['vje_fechamenor'].'
 					</td>
@@ -378,11 +288,18 @@ menu();
         } catch (PDOException $e) {  
             echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
         };
-        echo '</table>';
+        echo '</table>             
+             ';
+        if ($cantidadResultados == 0) {
+            echo '
+              <h3><center>No se encontraron viajes con esas características.<BR>Por favor, cargue un pedido de viaje.</center></h3>              
+              ';
+        };
       };                               
       cerrarConexion($conexion);
 
 ?>
+    <div class="clearingdiv">&nbsp;</div>
 </div>
 <?php
 include 'footer.php';
