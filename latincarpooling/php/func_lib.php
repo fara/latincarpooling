@@ -1,93 +1,264 @@
 <?Php
-Function database_connect(){
-	require('/var/www/include/carpooling_db.php');
-	return  $cn=pg_connect("host=".$db_host." dbname=".$db_database." user=".$db_user." password=".$db_pass);
+Function nuevaConexion(){	
+    $dsn = "carpooling";
+    $usuario = "carpooling";
+    $pass="metallica23";
+    
+    try {	    
+        $dbh = new PDO('odbc:'.$dsn, $user, $pass);
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   
+    } catch (PDOException $e) {  
+        print "Error!: " . $e->getMessage() . "<br/>";
+        die();
+    }
+    
+	return $dbh;
 }
 
-Function database_query( $consulta){
-	return 	pg_query( $consulta);
-}
+function cerrarConexion($dbh) {
+    $dbh = null;
+    return 0;
+};
 
-Function database_fetch_row( $resultado){
-	return pg_fetch_row($resultado);
-}
-
-Function database_close( $conexion){
-	return pg_close($conexion);
-}
-
-function buscar_campo($campo, $tabla, $campoclave, $clave){	
-	$cn=database_connect();
-	$result=pg_query("Select ".$campo."
-					  From ".$tabla."
-					  where ".$campoclave." = '".$clave."'");
-	$row = pg_fetch_row($result);	
-	pg_close($cn);
-	return trim($row[0]);
-}
-
-function buscar_campo_nopost($campo, $tabla, $campoclave, $clave){
-	if(count($_POST) == 0){		
-		$cn=database_connect();
-		$result=pg_query("Select ".$campo."
-					  	From ".$tabla."
-					  	where ".$campoclave." = '".$clave."'");
-		$row = pg_fetch_row($result);	
-		pg_close($cn);
-		return trim($row[0]);
-	}else{
-		return $_POST[$campo];
-	}
-}
-
-function verificar_post($campo){
-	if (isset($_POST[$campo])){
-		if (strlen(trim($_POST[$campo])) > 0){
+function verificar_campo($campo){
+	if (isset($_REQUEST[$campo])){
+		if (strlen(trim($_REQUEST[$campo])) > 0){
 			return 1;
 		}
 	}
 	return 0;
 }
 
-function asignar_style($campo){
-	if (count($_POST) > 0){
-		if (strlen(trim($_POST[$campo])) > 0){
-				return 'style2';
-		}else{
-			return 'style3';
-		}
-	}else{
-		return 'style2';
+function hay_campos_enviados() {
+	if (count($_POST) > 0 || count($_GET) > 0 ) {		
+		return 1;		
 	}
+	return 0;
 }
 
 
 function error($msg){
 	echo '
+	    <table align="center">
 		<tr>
 			<td><div align="right">			
-				<img src="/imagenes/Warning.png" width="50" height="50" border="0">
+				<img src="/img/Warning.png" width="50" height="50" border="0">
 			</div></td>
 			<td>			
 				<span class="style5">ERROR: '.$msg.' <br></span>
 			</td>
 		</tr>
+		</table>
 	';
 }
 
 function no_error($msg){
 	echo '
+	    <table align="center">
 		<tr>
 			<td><div align="right">			
-				<img src="/imagenes/Good.png" width="50" height="50" border="0">
+				<img src="/img/Good.png" width="50" height="50" border="0">
 			</div></td>
 			<td>			
 				<span class="style1">'.$msg.' <br></span>
 			</td>
 		</tr>
+		</table>
 	';
 }
 
+function valor_campo($campo){
+	if(count($_REQUEST) == 0) {
+		return "";
+	}else {
+		return $_REQUEST[$campo];
+	};
+};
 
+/* Verifica numeros sin espacios */
+function verificar_numero($string){
+	$var = $_REQUEST[$string];
+	return !ereg('[^0-9]', trim($var));
+}
+
+/* Verifica caracteres */
+function verificar_caracter($string){
+	$var = $_REQUEST[$string];
+	return !ereg('[^a-zA-Z ]', trim($var));
+}
+
+/* Verifica caracteres y numeros */
+function verificar_caracter_numeros($string){
+	$var = $_REQUEST[$string];
+	return !ereg('[^a-zA-Z0-9 ]', trim($var));
+}
+
+/* Verifica caracteres y numeros sin espacio */
+function verificar_caracter_numeros_se($string){
+	$var = $_REQUEST[$string];
+	return !ereg('[^a-zA-Z0-9]', trim($var));
+}
+
+/* Verifica formato de mail */
+function verificar_email($string){
+	$var = $_REQUEST[$string];
+	if (ereg('[^a-zA-Z0-9@.\-_]', $var) == true){
+		return false;
+	}else{
+		list($usuario, $dominio) = explode("@", $var, 2);
+		if (ereg('@', trim($usuario))){
+			return false;
+		}
+		if (ereg('@', trim($dominio))){
+			return false;
+		}
+		/*list($part1, $part2) = explode(".", $dominio, 2);
+		if(strlen($part1) == 0 || strlen($part2) ==0 ){
+			echo ".".$part1.".".$part2.".";
+			return false;
+		}*/
+		return true;
+	}
+}
+
+/* Verifica numeros de ip o limites que tengan punto */
+function verificar_ip($string){
+	$var = $_REQUEST[$string];
+	return !ereg('[^0-9.]', trim($var));
+}
+
+function es_bisiesto($año){ 
+  if ($año%4!=0) 
+    $bisiesto=false; 
+  else 
+    if ($año%400==0) 
+      $bisiesto=true; 
+    else 
+      if ($año%100==0) 
+        $bisiesto=false; 
+      else 
+        $bisiesto=true; 
+  return $bisiesto; 
+}
+
+function es_fecha_valida($dia, $mes, $año){ 
+  if ($dia<0 || $dia>31 || $mes<0 || $mes >12) 
+    $valida=false; 
+  else 
+    if (($mes==4 || $mes==6 || $mes==9 || $mes==11) && $dia > 30) 
+      $valida=false; 
+    else 
+      if ($mes==2 && $dia>28+es_bisiesto($año)) 
+        $valida=false; 
+       else 
+        $valida=true; 
+  return $valida; 
+} 
+
+/*AR 2007-10-27 Devuelve un booleano indicando si el string recibido como parametro es una
+  fecha valida con formato dd/mm/aaaa. */
+function es_string_fecha_valida($fecha){	
+    $bol = false;
+	if (strlen($fecha) == 10){
+		list($dia, $mes, $año) = explode("/", $fecha, 3);
+		if (strlen($dia) == 2 && strlen($mes) == 2 && strlen($año) == 4){
+			$bol = es_fecha_valida($dia, $mes, $año);
+		};
+	};
+	return $bol;
+}
+
+
+/*AR 2007-10-27 Devuelve una fecha con el formato definido por la ISO que es compatible con 
+  la mayoria de las bases de datos. Toma como entrada una fecha valida con formato dd/mm/aaaa.
+  En caso de error, devuelve un string vacio.*/  
+function obtener_string_fecha_iso($fecha){
+	if (!es_string_fecha_valida($fecha)) {
+	        return '';
+	};
+	list($dia, $mes, $año) = explode("/", $fecha, 3);
+	return $año.$mes.$dia;
+}
+
+/* Verifica numeros sin espacios */
+function es_numero_entero($string){	
+	return !ereg('[^0-9]', trim($string));
+}
+
+function es_string_hora_valida($horaString){	    
+	if (strlen($horaString) == 5) {
+		list($horas, $minutos) = explode(':', $horaString, 2);	
+		if (es_numero_entero($horas) && es_numero_entero($minutos)) {
+		    if (strlen($horas) == 2 && strlen($minutos) == 2) {
+			    if ($horas >= 0 && $horas <= 23 && $minutos >= 0 && $minutos <= 59) {			
+    			    return true;
+	    		};
+		    };
+		};
+	};
+	return false;
+};
+
+
+
+function print_select_mes ($name, $mesSeleccionado, $estilo) {
+    if ($estilo != '') {
+        echo '<span class="'.$estilo.'">';
+    };
+    echo '<select name="'.$name.'" id="'.$name.'">';
+					
+	echo                            '<option value="01"';
+	if ($mesSeleccionado == '01') { echo ' selected="selected"'; } ;
+	echo                                    '>Enero</option>';					
+			
+	echo                            '<option value="02"';										
+	if ($mesSeleccionado == '02') { echo ' selected="selected"'; } ;
+	echo                                    '>Febrero</option>';
+			
+	echo                            '<option value="03"';					
+	if ($mesSeleccionado == '03') { echo ' selected="selected"'; } ;
+	echo                                    '>Marzo</option>';
+							
+	echo                            '<option value="04"';
+	if ($mesSeleccionado == '04') { echo ' selected="selected"'; } ;
+	echo                                    '>Abril</option>';
+			
+	echo                            '<option value="05"';
+	if ($mesSeleccionado == '05') { echo ' selected="selected"'; } ;
+	echo                                    '>Mayo</option>';
+			
+	echo                            '<option value="06"';
+	if ($mesSeleccionado == '06') { echo ' selected="selected"'; } ;
+	echo                                    '>Junio</option>';
+			
+	echo                            '<option value="07"';
+	if ($mesSeleccionado == '07') { echo ' selected="selected"'; } ;
+	echo                                    '>Julio</option>';
+			
+	echo                            '<option value="08"';
+	if ($mesSeleccionado == '08') { echo ' selected="selected"'; } ;
+	echo                                    '>Agosto</option>';
+			
+	echo                            '<option value="09"';
+	if ($mesSeleccionado == '09') { echo ' selected="selected"'; } ;
+	echo                                    '>Septiembre</option>';
+			
+	echo                            '<option value="10"';
+	if ($mesSeleccionado == '10') { echo ' selected="selected"'; } ;
+	echo                                    '>Octubre</option>';
+			
+	echo                            '<option value="11"';
+	if ($mesSeleccionado == '11') { echo ' selected="selected"'; } ;
+	echo                                    '>Noviembre</option>';
+			
+    echo                            '<option value="12"';				    
+    if ($mesSeleccionado == '12') { echo ' selected="selected"'; } ;
+    echo                                    '>Diciembre</option>';
+    echo '</select>';
+    if ($estilo != '') {
+        echo '</span>';
+    };
+};
 
 ?>
