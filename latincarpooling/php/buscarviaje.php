@@ -34,7 +34,7 @@ menu();
                         error("Por favor, complete la maxima fecha en la cual desea viajar");																			
                     } elseif (verificar_campo('validarCampos') && !es_string_fecha_valida(valor_campo('fechaHasta')) ) {
                         error("La fecha final ingresada es incorrecta. Por favor, utilice el formato dd/mm/aaaa.");																			                        
-                    } elseif (verificar_campo('validarCampos') && verificar_campo('fechaHasta') && !es_numero_entero($_REQUEST['cantidadLugares']) ) {
+                    } elseif (verificar_campo('validarCampos') && verificar_campo('cantidadLugares') && !es_numero_entero($_REQUEST['cantidadLugares']) ) {
                         error("La cantidad de lugares tiene que ser un numero entero.");																			                        
                     } else {
                         if (verificar_campo('validarRegiones') && verificar_campo('validarCiudades') && verificar_campo('validarCampos')) {

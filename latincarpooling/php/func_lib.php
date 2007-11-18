@@ -187,6 +187,11 @@ function es_numero_entero($string){
 	return !ereg('[^0-9]', trim($string));
 }
 
+function es_numero_decimal($string){	
+	return !ereg('[^0-9.]', trim($string));
+}
+
+
 function es_string_hora_valida($horaString){	    
 	if (strlen($horaString) == 5) {
 		list($horas, $minutos) = explode(':', $horaString, 2);	
