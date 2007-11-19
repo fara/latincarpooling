@@ -1,13 +1,15 @@
-/*************** sp_calcular_recorrido_recursivo *******************/
-drop procedure sp_calcular_recorrido_recursivo;
+lujan - junin
 
-create procedure sp_calcular_recorrido_recursivo
+
+drop procedure sp_calcular_recorrido;
+
+create procedure sp_calcular_recorrido
 (
     id_ciudad_origen integer,
     id_ciudad_destino integer,
-    iteracion integer default 1,
     id_sesion integer
 ) RETURNING integer;
+
 
         DEFINE id_tramo integer;
         DEFINE cnt integer;
@@ -16,7 +18,7 @@ create procedure sp_calcular_recorrido_recursivo
         DEFINE itr integer;
         DEFINE flag integer;
 
-        let itr = iteracion;
+        let itr = 1;
         let flag = -1;
 
         if exists (select 1 from t_control_ciudad where cad_id = id_ciudad_origen and sesion_id = id_sesion)
@@ -105,16 +107,18 @@ create procedure sp_calcular_recorrido_recursivo
                         )
                         values (id_recorrido, id_tramo, itr, id_sesion);
                         let flag = id_recorrido;
-                        return flag;
+                        delete from t_control_ciudad where cad_id <> id_ciudad_origen and sesion_id = id_sesion;
                 end if;
 
         end foreach;
 
-        if flag <> -1
+        if flag = -1
         then
-                delete from t_control_ciudad where cad_id = id_ciudad_origen and sesion_id = id_sesion;
+                delete from t_orden_recorrido where sesion_id = id_sesion;
         end if;
-
+        
+        delete from t_control_ciudad where sesion_id = id_sesion;
+        
         return flag;
 
-end procedure;
+end procedure
