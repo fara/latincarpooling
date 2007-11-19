@@ -87,48 +87,54 @@ menu();
         if ($camposOk != 0) {
             try {
                 $conexion->beginTransaction();
-                $resultadoViajeMax = $conexion->query('SELECT max(vje_id) from viaje');
+                $resultadoViajeMax = $conexion->query('SELECT max(vje_id) maxid from viaje');
                 $filaViajeMax = $resultadoViajeMax->fetch(PDO::FETCH_ASSOC);
                 if ($filaViajeMax != '') {
-                        $vje_id = $filaViajeMax['vje_id'];
+                        $viajeID = $filaViajeMax['maxid'];
                 };
-                if (!($vje_id >= 0)) {
-                    $vje_id = 1;
-                };                
+                if ($viajeID > 0) {
+                    $viajeID++;
+                } else {                 
+                    $viajeID = 1;
+                };                         
                 $conexion->exec("
                     insert into viaje (
                         vje_id,
                         vje_rdo_id,
                         vje_fechamenor,
                         vje_fechamayor,
-                        vje_tipo_viaje
+                        vje_tipoviaje
                     ) values (
-                        ".$vje_id.",
+                        ".$viajeID.",
                         ".$recorridoSeleccionado.",
                         '".obtener_string_fecha_bd($fechaDesde)."',
                         '".obtener_string_fecha_bd($fechaHasta)."',
                         'P')
                         ");
+                                                        
                 $conexion->exec("
                     insert into viajepasajeropend (
                         vpp_vje_id,
                         vpp_importemaximo,
                         vpp_uio_id
                     ) values (
-                        ".$vje_id.",
+                        ".$viajeID.",
                         ".$importeMaximo.",
                         666)
                         ");
                         /* Inserta el viaje como el usuario tester. */  
                 $conexion->commit();
+                echo '<H3>La solicitud de viaje se guardo correctamente.</H3>';        
             } catch (PDOException $e) {  
-                echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+                echo '<H3>Ocurrio un error al guardar la solicitud.</H3>';        
+                echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';     
+                $conexion->rollback();                   
             };
-            echo '<P>La solicitud de viaje se guardo correctamente.</P>';        
+            
         } else {                
             /* Comienzo del formulario.*/
             echo '
-        <form name="formbuscarviaje" method="get" action="">            
+        <form name="formbuscarviaje" method="post" action="">            
         <table cellpadding="1" cellspacing="1" width="500" bordercolor="#999999" align="center" valign="top">
             <tr>
 			    <td width="25%"> 

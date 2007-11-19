@@ -17,11 +17,12 @@ echo '<div id="mainmenu">
 
 <div id="leftside">
 <a class="nav active" href="index.php">Inicio</a><span class="hide"> | </span>
-<a class="nav" href="2col.html">Viajes</a><span class="hide"> | </span>
+<a class="nav" href="#">Viajes</a><span class="hide"> | </span>
 <a class="nav sub" href="buscarviaje.php">Buscar</a><span class="hide"> | </span>
 <a class="nav sub" href="#">Mis Viajes</a><span class="hide"> | </span>
-<a class="nav" href="no-img.html">Pedidos</a><span class="hide"> | </span>
+<a class="nav" href="#">Pedidos</a><span class="hide"> | </span>
 <a class="nav sub" href="#">Buscar</a><span class="hide"> | </span>
+<a class="nav sub" href="ingresarPedido.php">Nuevo</a><span class="hide"> | </span>
 <a class="nav sub" href="#">Mis Pedidos</a><span class="hide"> | </span>
 <a class="nav" href="#">Mis Mensajes</a><span class="hide"> | </span>
 <a class="nav sub" href="#">Recibidos</a><span class="hide"> | </span>
