@@ -8,7 +8,7 @@ include 'menu.php';
 menu();
 ?>
 <div id="content">
-<h1>Listar Viajes de Pasajero Pendientes</h1>
+<h1>Viajes de Pasajero Pendientes</h1>
 <?php
 	$camposOk = 0;									                    
 	/* Si se enviaron parametros.*/
@@ -20,11 +20,11 @@ menu();
 		};
 	};
 	$conexion = nuevaConexion();
-    $idUsuario = valor_campo('usuario');
+	$idUsuario = valor_campo('usuario');
 	$cantidadResultados = 0;
 ?>
 <table cellpadding="1" cellspacing="1" width="100%">
-	<tr Class="tituloColumna">
+	<tr class="tituloColumna">
 		<td width="15%">Fecha Inicial</td>
 		<td width="15%">Fecha Final</td>
 		<td width="15%">Importe Máximo</td>
@@ -33,18 +33,25 @@ menu();
 		<td width="12%">¿Es Fumador?</td>
 	</tr>
 <?php
-	try {                        
-		foreach (
-			$conexion->query("
-                select v.vje_id, v.vje_fechamenor,
-                    v.vje_fechamayor, vp.vpp_uio_id, vp.vpp_importemaximo,
-					u.uio_id, u.uio_nombreusuario, u.uio_sexo, u.uio_esfumador
-                from viaje v, viajepasajeropend vp, usuario u
-				where v.vje_id = vp.vpp_vje_id AND u.uio_id = vp.vpp_uio_id AND vp.vpp_uio_id = ". $usuario .";")
-			as $row) {
-
+	try {
+		$sql = "select
+				v.vje_id,
+				v.vje_fechamenor,
+				v.vje_fechamayor,
+				vp.vpp_uio_id,
+				vp.vpp_importemaximo,
+				u.uio_id,
+				u.uio_nombreusuario,
+				u.uio_sexo,
+				u.uio_esfumador
+                	from viaje v, viajepasajeropend vp, usuario u
+			where 
+				v.vje_id = vp.vpp_vje_id AND
+				u.uio_id = vp.vpp_uio_id AND
+				vp.vpp_uio_id = ". $idUsuario .";";
+		foreach ($conexion->query($sql) as $row) {
 			$cantidadResultados++;        
-			$descripcionImporte = '$ '.$row['vpp_importemaximo'].'/pasajero';
+			$descripcionImporte = '$ '.$row['vpp_importemaximo'];
 			if ($row['uio_sexo'] == 'M') {
 				$descripcionSexo = 'Hombre';
 			} else {
@@ -64,21 +71,21 @@ menu();
 					<td>'.$descripcionSexo.'</td>		
 					<td>'.$descripcionEsFumador.'</td>	
 		        </tr>';
-		};                            
-	} catch (PDOException $e) {  
-		echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
-	};
+		};
 ?>
 </table>
 <?php
+	} catch (PDOException $e) {  
+		echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
+	};
 	if ($cantidadResultados == 0) {
 		echo '<h3><center>No se encontraron viajes de pasajero para el usuario.</center></h3>';
 	} else {
-		echo '<h3><center>Se encontraron '. $cantidadResultados .' viajes de pasajero.</center></h3>';
+		echo '<center>Se encontraron '. $cantidadResultados .' viajes de pasajero.</center>';
 	};
 	cerrarConexion($conexion);
 ?>
-    <div class="clearingdiv">&nbsp;</div>
+	<div class="clearingdiv">&nbsp;</div>
 </div>
 <?php
 include 'footer.php';
