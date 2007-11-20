@@ -1,8 +1,6 @@
 lujan - junin
 
 
-drop procedure sp_calcular_recorrido;
-
 create procedure sp_calcular_recorrido
 (
     id_ciudad_origen integer,
@@ -14,9 +12,12 @@ create procedure sp_calcular_recorrido
         DEFINE id_tramo integer;
         DEFINE cnt integer;
         DEFINE nueva_cad_origen_id integer;
-        DEFINE id_recorrido integer;
+        DEFINE id_recorrido_1 integer;
+        DEFINE id_recorrido_2 integer;
         DEFINE itr integer;
         DEFINE flag integer;
+        DEFINE orden_tramo integer;
+        DEFINE cant_recorridos integer;
 
         let itr = 1;
         let flag = -1;
@@ -34,6 +35,19 @@ create procedure sp_calcular_recorrido
         )
         values (id_ciudad_origen, id_sesion);
 
+        select count(*) into cant_recorridos
+        from
+					recorrido
+				where
+					rdo_cad_id_origen = id_ciudad_origen
+					and rdo_cad_id_destino = id_ciudad_destino;
+				
+				if cant_recorridos > 1
+				then
+								return cant_recorridos;
+				end if;
+        
+
         select tra_id into id_tramo
         from
                 tramo
@@ -41,43 +55,40 @@ create procedure sp_calcular_recorrido
                 tra_cad_id1 = id_ciudad_origen
                 and tra_cad_id2 = id_ciudad_destino
         group by 1;
-
-
+        
         if id_tramo is not null
         then
                 --encontre el destino
                 select
-                        nvl(max(oro_rdo_id),0) + 1 into id_recorrido
+                        nvl(max(oro_rdo_id),0) + 1 into id_recorrido_1
                 from
                         t_orden_recorrido
                 where 
                         sesion_id = id_sesion;
+                
+                select
+                        nvl(max(oro_rdo_id),0) into id_recorrido_2
+                from
+                        ordenrecorrido;
+                				
 
-
-                insert into t_orden_recorrido
+                insert into ordenrecorrido
                 (
                         oro_rdo_id,
                         oro_tra_id,
-                        oro_ordentramo,
-                        sesion_id
-                ) values (id_recorrido, id_tramo, itr, id_sesion);
+                        oro_ordentramo
+                ) values (id_recorrido_1 + id_recorrido_2, id_tramo, itr);
+                
+                insert into recorrido
+                (
+                				rdo_id,
+                				rdo_cad_id_origen,
+                				rdo_cad_id_destino
+                ) values (id_recorrido_1 + id_recorrido_2,id_ciudad_origen, id_ciudad_destino);
 
                 delete from t_control_ciudad where cad_id = id_ciudad_origen and sesion_id = id_sesion;
 
-                return id_recorrido;
-        end if;
-
-        select
-                cant_iteraciones into cnt
-        from
-                t_cantidad_iteraciones;
-
-        -- me fijo que no supere la cantidad de iteraciones
-        if itr >= cnt
-        then
-                --RAISE EXCEPTION -746, 0, 'Supero la cantidad de recorridos sin encontrar al destino. [19]';
-
-                return -1;
+                return id_recorrido_1;
         end if;
 
         -- si no lo encontre itero en toda los destinos de este origen;
@@ -94,9 +105,9 @@ create procedure sp_calcular_recorrido
                 -- Llamo al sp recursivo pero ahora como origen las ciudades destino
                 -- de la ciudad que me pasaron a mi por parametro
                 -- si tira un error de iteracion o algo, corta aca y no realiza el insert siguiente
-                execute procedure sp_calcular_recorrido_recursivo(nueva_cad_origen_id,id_ciudad_destino, itr + 1, id_sesion) into id_recorrido ;
+                execute procedure sp_calcular_recorrido_recursivo(nueva_cad_origen_id,id_ciudad_destino, itr + 1, id_sesion) into id_recorrido_1 ;
 
-                if id_recorrido <> -1
+                if id_recorrido_1 <> -1
                 then
                         insert into t_orden_recorrido
                         (
@@ -105,8 +116,8 @@ create procedure sp_calcular_recorrido
                                 oro_ordentramo,
                                 sesion_id
                         )
-                        values (id_recorrido, id_tramo, itr, id_sesion);
-                        let flag = id_recorrido;
+                        values (id_recorrido_1, id_tramo, itr, id_sesion);
+                        let flag = id_recorrido_1;
                         delete from t_control_ciudad where cad_id <> id_ciudad_origen and sesion_id = id_sesion;
                 end if;
 
@@ -119,6 +130,47 @@ create procedure sp_calcular_recorrido
         
         delete from t_control_ciudad where sesion_id = id_sesion;
         
-        return flag;
+				select
+					nvl(max(oro_rdo_id),0) into id_recorrido_2
+				from
+					ordenrecorrido;
+        
+        foreach
+        				select
+        								oro_rdo_id, oro_tra_id, oro_ordentramo into  id_recorrido_1, id_tramo, orden_tramo
+								from
+												t_orden_recorrido
+								where
+												sesion_id = id_sesion
+								
+                insert into ordenrecorrido
+                (
+                        oro_rdo_id,
+                        oro_tra_id,
+                        oro_ordentramo
+                ) values (id_recorrido_1 + id_recorrido_2, id_tramo, orden_tramo);
+                
+        end foreach;
 
-end procedure
+        foreach
+        				select
+        								oro_rdo_id into  id_recorrido_1
+								from
+												t_orden_recorrido
+								where
+												sesion_id = id_sesion
+								group by oro_rdo_id
+								
+                insert into recorrido
+                (
+                        rdo_id,
+                        rdo_cad_id_origen,
+                        rdo_cad_id_destino
+                ) values (id_recorrido_1 + id_recorrido_2, id_ciudad_origen, id_ciudad_destino);
+                
+        end foreach;
+        
+        delete from t_orden_recorrido where sesion_id = id_sesion;
+        return flag;    
+
+end procedure 
