@@ -44,6 +44,7 @@ create procedure sp_calcular_recorrido
 				
 				if cant_recorridos > 1
 				then
+								delete from t_control_ciudad where sesion_id = id_sesion;
 								return cant_recorridos;
 				end if;
         
@@ -88,7 +89,7 @@ create procedure sp_calcular_recorrido
 
                 delete from t_control_ciudad where cad_id = id_ciudad_origen and sesion_id = id_sesion;
 
-                return id_recorrido_1;
+--                return id_recorrido_1;
         end if;
 
         -- si no lo encontre itero en toda los destinos de este origen;
