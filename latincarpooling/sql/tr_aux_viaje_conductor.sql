@@ -32,7 +32,7 @@ CREATE PROCEDURE spu_informar_pasajeros
             lugares_libres > 0
 
         CALL spi_mensaje_crear(receptor, id_conductor, 'Viaje recibido',
-            null) RETURNING id_mensaje;
+            'Se recibio un recorrido buscado ') RETURNING id_mensaje;
 
     END FOREACH;
 

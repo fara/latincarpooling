@@ -3,8 +3,8 @@ create procedure spi_mensaje_crear
 (
      id_dest     integer,
      id_rem      integer,
-     asunto      varchar(255),
-     texto       blob
+     asunto      char(254),
+     texto       varchar(250)
 )
 returns integer;
          define nuevo_id like mensaje.mje_id;
@@ -65,6 +65,6 @@ document
 '                    -  No existe el usuario remitente.                                 ',
 '                    -  No existe el usuario destinatario.                              ',
 '                    -  No se ingresó el asunto.                                        ',
-'                                                                                       ',
+'                                                                                       '
 with listing in 'informix_warn'
 ;
