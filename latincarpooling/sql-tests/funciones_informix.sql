@@ -8,7 +8,7 @@ select calculo(3.5,10) from combustible
 
 
 --drop function verificar_usuario
---;
+-- ;
 
 create function DBO.VERIFICAR_USUARIO
 (
