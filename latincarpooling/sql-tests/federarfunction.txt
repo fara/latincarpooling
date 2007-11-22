@@ -1,0 +1,33 @@
+Re: Tareas pendientes
+
+PUBLICIDAD
+Les paso lo que logre hacer:
+
+--En informix
+CREATE FUNCTION DBO.SUMAR ( numero1 integer, numero2 integer )
+RETURNING integer;
+RETURN numero1 + numero2;
+END FUNCTION;
+
+--En db2
+create FUNCTION DB2ADMIN.SUMAR (integer, integer)
+RETURNS integer
+AS TEMPLATE
+DETERMINISTIC
+NO EXTERNAL ACTION
+
+CREATE FUNCTION MAPPING MAPSUMART FOR SUMAR
+SERVER TYPE INFORMIX OPTIONS (REMOTE_NAME 'SUMAR')
+
+--en php
+select sumar(1,2) resultado from USUARIO
+
+Esto nos sirve para el procedimiento de Fernando, pero no para el
+login, de todas formas es negociable.
+
+Con respecto al login, tengo algun tema con los parametros char. No
+encotre todavia que es lo que esta pasando.
+
+Antes de irme de aca voy a hacer un backup del repositorio y del sitio.
+
+Saludos,

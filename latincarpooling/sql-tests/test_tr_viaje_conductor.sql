@@ -11,7 +11,7 @@ insert into viajepasajeropend(vpp_importemaximo, vpp_vje_id, vpp_uio_id)
     values(100, 1001, 666);
 
 -- Ver los mensajes agregados
-SELECT mje_id, mje_asunto FROM mensaje;
+SELECT mje_id, mje_asunto, mje_texto FROM mensaje;
 
 -- Insertar el viaje con unos valores
 EXECUTE PROCEDURE spu_viaje_conductor (
