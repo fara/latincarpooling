@@ -1,11 +1,22 @@
 <?Php
+
+set_time_limit(6000);
+
 Function nuevaConexion(){	
     $dsn = "carpooling";
     $usuario = "carpooling";
     $pass="metallica23";
     
-    try {	    
+    /*
+    $dsn = "Grupo03federada";
+    $usuario = "db2admin";
+    $pass="sabd03";
+    */
+    try {	     
         $dbh = new PDO('odbc:'.$dsn, $user, $pass);
+        /*$dbh = new PDO("ibm:DRIVER={IBM DB2 ODBC DRIVER};DATABASE=SABD;" .
+    		"HOSTNAME=127.0.0.1;PORT=50001;PROTOCOL=TCPIP;", $usuario, $pass,
+    		array (PDO::ATTR_PERSISTENT => true));*/
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
    
     } catch (PDOException $e) {  
@@ -15,6 +26,26 @@ Function nuevaConexion(){
     
 	return $dbh;
 }
+
+Function nuevaConexionInformix(){	
+    $dsn = "Grupo3informix";
+    $usuario = "sa505103";
+    $pass="sabd03";
+          
+    try {	     
+        /*$dbh = new PDO('odbc:'.$dsn, $user, $pass);        */
+        $dbh =  new PDO("informix:host=192.168.2.2;service=1525;database=grupo03;server=on_centauro;protocol=onsoctcp;", "sa505103", "sabd03");
+   
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   
+    } catch (PDOException $e) {  
+        print "Error!: " . $e->getMessage() . "<br/>";
+        die();
+    }
+    
+	return $dbh;
+}
+
 
 function cerrarConexion($dbh) {
     $dbh = null;
@@ -272,7 +303,7 @@ function descripcionPais($conexion, $pais) {
                    $resultado = $conexion->query('SELECT pis_nombre from pais where pis_id = '.$pais);
                    $fila = $resultado->fetch(PDO::FETCH_ASSOC);
                    if ($fila != '') {
-                        return $fila['pis_nombre'];
+                        return $fila['PIS_NOMBRE'];
                    };                   
     } catch (PDOException $e) {  
         echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
@@ -284,10 +315,10 @@ function listaPaises($conexion, $nombreCampo, $paisSeleccionado) {
     try {
         echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
         foreach ($conexion->query('SELECT pis_id, pis_nombre from pais order by pis_nombre') as $row) {
-            if ($paisSeleccionado == $row['pis_id']) {
-                echo '<option value="'.$row['pis_id'].'" selected="selected">'.$row['pis_nombre'].'</option>';
+            if ($paisSeleccionado == $row['PIS_ID']) {
+                echo '<option value="'.$row['PIS_ID'].'" selected="selected">'.$row['PIS_NOMBRE'].'</option>';
             } else {
-                echo '<option value="'.$row['pis_id'].'">'.$row['pis_nombre'].'</option>';
+                echo '<option value="'.$row['PIS_ID'].'">'.$row['PIS_NOMBRE'].'</option>';
             };
         };
         echo '</select>';
@@ -301,7 +332,7 @@ function descripcionRegion($conexion, $region) {
                    $resultado = $conexion->query('SELECT ron_nombre from region where ron_id = '.$region);
                    $fila = $resultado->fetch(PDO::FETCH_ASSOC);
                    if ($fila != '') {
-                        return $fila['ron_nombre'];
+                        return $fila['RON_NOMBRE'];
                    };                   
     } catch (PDOException $e) {  
         echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
@@ -313,10 +344,10 @@ function listaRegiones($conexion, $nombreCampo, $pais, $regionSeleccionada) {
     try {
         echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
         foreach ($conexion->query('SELECT ron_id, ron_nombre from region where ron_pis_id = '.$pais.' order by ron_nombre') as $row) {
-            if ($regionSeleccionada == $row['ron_id']) {
-                echo '<option value="'.$row['ron_id'].'" selected="selected">'.$row['ron_nombre'].'</option>';
+            if ($regionSeleccionada == $row['RON_ID']) {
+                echo '<option value="'.$row['RON_ID'].'" selected="selected">'.$row['RON_NOMBRE'].'</option>';
             } else {
-                echo '<option value="'.$row['ron_id'].'">'.$row['ron_nombre'].'</option>';
+                echo '<option value="'.$row['RON_ID'].'">'.$row['RON_NOMBRE'].'</option>';
             };
         };
         echo '</select>';
@@ -330,7 +361,7 @@ function descripcionCiudad($conexion, $ciudad) {
                    $resultado = $conexion->query('SELECT cad_nombre from ciudad where cad_id = '.$ciudad);
                    $fila = $resultado->fetch(PDO::FETCH_ASSOC);
                    if ($fila != '') {
-                        return $fila['cad_nombre'];
+                        return $fila['CAD_NOMBRE'];
                    };
                    return '(Sin Ciudad)';
     } catch (PDOException $e) {  
@@ -343,10 +374,10 @@ function listaCiudades($conexion, $nombreCampo, $region, $ciudadSeleccionada) {
     try {
         echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
         foreach ($conexion->query('SELECT cad_id, cad_nombre from ciudad where cad_ron_id = '.$region.' order by cad_nombre') as $row) {
-            if ($ciudadSeleccionada == $row['cad_id']) {
-                echo '<option value="'.$row['cad_id'].'" selected="selected">'.$row['cad_nombre'].'</option>';
+            if ($ciudadSeleccionada == $row['CAD_ID']) {
+                echo '<option value="'.$row['CAD_ID'].'" selected="selected">'.$row['CAD_NOMBRE'].'</option>';
             } else {
-                echo '<option value="'.$row['cad_id'].'">'.$row['cad_nombre'].'</option>';
+                echo '<option value="'.$row['CAD_ID'].'">'.$row['CAD_NOMBRE'].'</option>';
             };
         };
         echo '</select>';

@@ -90,7 +90,7 @@ menu();
                 $resultadoViajeMax = $conexion->query('SELECT max(vje_id) maxid from viaje');
                 $filaViajeMax = $resultadoViajeMax->fetch(PDO::FETCH_ASSOC);
                 if ($filaViajeMax != '') {
-                        $viajeID = $filaViajeMax['maxid'];
+                        $viajeID = $filaViajeMax['MAXID'];
                 };
                 if ($viajeID > 0) {
                     $viajeID++;
@@ -120,7 +120,7 @@ menu();
                     ) values (
                         ".$viajeID.",
                         ".$importeMaximo.",
-                        666)
+                        ".$_SESSION["idusuario"].")
                         ");
                         /* Inserta el viaje como el usuario tester. */  
                 $conexion->commit();
@@ -228,11 +228,11 @@ menu();
                 <td>
 			        ';               
 		        /* Mostramos los recorridos que de las ciudades origen y destino.*/	    
-    		    $ultimoRecorridoEncontrado = '';		    
+    		    $ultimoRecorridoEncontrado = '';		        		    
 		        try {                        
                     foreach ($conexion->query("		    
    		            select r.rdo_id,
-                       oro.oro_ordentramo,
+                       oro.oro_ordentramo orden,                       
                        c_origen.cad_nombre cad_origen,
                        c_destino.cad_nombre cad_destino
                     from recorrido r
@@ -245,39 +245,23 @@ menu();
                     inner join ciudad c_destino
                             on c_destino.cad_id = t.tra_cad_id2
                     where r.rdo_cad_id_origen = ".$ciudadOrigen."
-                    and r.rdo_cad_id_destino = ".$ciudadDestino."
-                    union
-                    select r.rdo_id,
-                           -oro.oro_ordentramo,
-                           c_origen.cad_nombre cad_origen,
-                           c_destino.cad_nombre cad_destino
-                    from recorrido r
-                    inner join ordenrecorrido oro
-                            on oro.oro_rdo_id = r.rdo_id
-                    inner join tramo t
-                            on t.tra_id = oro.oro_tra_id
-                    inner join ciudad c_origen
-                            on c_origen.cad_id = t.tra_cad_id1
-                    inner join ciudad c_destino
-                            on c_destino.cad_id = t.tra_cad_id2
-                    where r.rdo_cad_id_origen = ".$ciudadDestino."
-                    and r.rdo_cad_id_destino = ".$ciudadOrigen."
+                    and r.rdo_cad_id_destino = ".$ciudadDestino."                    
                     order by r.rdo_id asc,
                            oro.oro_ordentramo asc
                         ") as $row) {
 		        
-		                if ( $ultimoRecorridoEncontrado != $row['rdo_id']) {
+		                if ( $ultimoRecorridoEncontrado != $row['RDO_ID']) {
 		                    /* Cerramos el radiobutton anterior.*/
 		                    if ($ultimoRecorridoEncontrado > 0) {
 		                        echo '<BR>';
 		                    };
 		        
         		            /* Creamos otro radiobutton.*/
-		                    $ultimoRecorridoEncontrado = $row['rdo_id'];
-		                    echo '<input type="radio" name="recorridoSeleccionado" value="'.$row['rdo_id'].'">';
-		                    echo $row['cad_origen'];		            
+		                    $ultimoRecorridoEncontrado = $row['RDO_ID'];
+		                    echo '<input type="radio" name="recorridoSeleccionado" value="'.$row['RDO_ID'].'">';
+		                    echo $row['CAD_ORIGEN'];		            
 		                };
-		                echo ' - '.$row['cad_destino'];		            
+		                echo ' - '.$row['CAD_DESTINO'];		            
 		            };
 		            if ($ultimoRecorridoEncontrado > 0) {
     		            echo '<BR>';

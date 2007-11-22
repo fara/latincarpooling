@@ -2,17 +2,11 @@
 
 function menu(){
 echo '<div id="mainmenu">
-<ul>
-<li><a class="current" href="index.html">Inicio</a></li>
-<li><a href="green.html">Viajes</a></li>
-<li><a href="orange.html">Pedidos</a></li>
-<li><a href="purple.html">Mensajes</a></li>
-<li><a href="red.html">Opciones</a></li>
-<li><a href="red.html">Salir</a></li>
-<li><a href="red.html">Novedades</a></li>
-</ul>
 </div>
- 
+<br><br><br><br>
+Hola '; 
+echo $_SESSION["nombreusuario"];
+echo '
 <div id="wrap">
 
 <div id="leftside">
@@ -26,19 +20,28 @@ echo '<div id="mainmenu">
 <a class="nav" href="#">Mis Mensajes</a><span class="hide"> | </span>
 <a class="nav sub" href="listarmensajes.php?tipo=recibidos">Recibidos</a><span class="hide"> | </span>
 <a class="nav sub" href="listarmensajes.php?tipo=enviados">Enviados</a><span class="hide"> | </span>
-<a class="nav sub" href="#">Nuevo</a><span class="hide"> | </span>
-<a class="nav" href="#">Opciones</a><span class="hide"> | </span>
 <a class="nav" href="login.php?accion=salir">Salir</a><span class="hide"> | </span>
-<a class="nav" href="#">Novedades</a><span class="hide"> | </span>
+
 
 </div>
 
 <div id="rightside">
-<h1>Latest news</h1>
-<p><strong>Dec 11: </strong>
-andreas09 is built with valid XHTML 1.1 and CSS2. It is simple and easy to work with, and it comes in several different flavors. This is version 1.0 (Dec 11th 2005).</p>
-<p><strong>Dec 10: </strong>
-Place for news or important messages, maybe?</p>
+<h1> <u>Carpooling</u>
+</h1>
+<p> <strong>¿Qué es “Carpooling” o viajar en grupo?</strong><br><br>
+La definición básica es cuando dos o más personas viajan juntas en el mismo vehículo. ¿Qué puede significar para usted? ¡Menos gastos!
+
+<br><br><strong>¿Cómo es que se ahorra?</strong><br><br>
+Unase a por lo menos otra persona para ir al trabajo y reduzca sus gastos de viaje. Mientras más personas tenga en su “carpool”, más bajos serán sus gastos. Ahorre dinero al dividir los costos entre las personas que viajan juntas o rotando las responsabilidades cada semana o dos. Recuerde: Usted puede comenzar tratando este sistema sólo unos días a la semana.
+
+<br><br><strong>Piense en los beneficios:</strong><br><br>
+• Menos gastos de viaje (para calcular cuanto se gasta viajando al trabajo en estos momentos, utilice la calculadora)<br>
+• Inscripción GRATIS en el Programa de Emergencia para Ir a Casa.<br>
+• Viajar en grupo le permite usar la línea HOV, lo cual reduce el tiempo que usted emplea viajando al trabajo.<br>
+• Menos autos en la carretera reduce la contaminacion y la congestión.<br>
+
+<br><br><strong>¡Comience hoy!</strong><br><br>
+  
 
 </div>
 ';

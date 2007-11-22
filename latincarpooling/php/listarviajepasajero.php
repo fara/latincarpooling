@@ -51,23 +51,23 @@ menu();
 				vp.vpp_uio_id = ". $idUsuario .";";
 		foreach ($conexion->query($sql) as $row) {
 			$cantidadResultados++;        
-			$descripcionImporte = '$ '.$row['vpp_importemaximo'];
-			if ($row['uio_sexo'] == 'M') {
+			$descripcionImporte = '$ '.$row['VPP_IMPORTEMAXIMO'];
+			if ($row['UIO_SEXO'] == 'M') {
 				$descripcionSexo = 'Hombre';
 			} else {
 				$descripcionSexo = 'Mujer';
 			};
-			if ($row['uio_esfumador'] == '1') {
+			if ($row['UIO_ESFUMADOR'] == '1') {
 				$descripcionEsFumador = 'Sí';
 			} else {
 				$descripcionEsFumador = 'No';
 			};
 			
 			echo '<tr class="filaResultado">							        
-					<td>'. $row['vje_fechamenor'].'</td>
-					<td>'.$row['vje_fechamayor'].'</td>
+					<td>'. $row['VJE_FECHAMENOR'].'</td>
+					<td>'.$row['VJE_FECHAMAYOR'].'</td>
 					<td>'.$descripcionImporte.'</td>					
-					<td>'.$row['uio_nombreusuario'].'</td>							
+					<td>'.$row['UIO_NOMBREUSUARIO'].'</td>							
 					<td>'.$descripcionSexo.'</td>		
 					<td>'.$descripcionEsFumador.'</td>	
 		        </tr>';

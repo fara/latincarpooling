@@ -106,7 +106,7 @@ menu();
                 $resultadoViajeMax = $conexion->query('SELECT max(vje_id) maxid from viaje');
                 $filaViajeMax = $resultadoViajeMax->fetch(PDO::FETCH_ASSOC);
                 if ($filaViajeMax != '') {
-                        $viajeID = $filaViajeMax['maxid'];
+                        $viajeID = $filaViajeMax['MAXID'];
                 };
                 if ($viajeID > 0) {
                     $viajeID++;
@@ -276,12 +276,23 @@ menu();
                 </td>			        
                 <td>
 			        ';               
+			        
+		    
+		    
+		    
 		        /* Mostramos los recorridos que de las ciudades origen y destino.*/	    
     		    $ultimoRecorridoEncontrado = '';		    
 		        try {                        
+		        /*	
+		       $conexionInformix = nuevaConexionInformix();
+		       $consultaInformix = "EXECUTE PROCEDURE sp_calcular_recorrido (".$ciudadOrigen.",".$ciudadDestino.",".rand(1,1000).")";
+		       echo 'Areco:<br>'.$consultaInformix;
+		       $resultado = $conexionInformix->exec($consultaInformix);
+		       	*/	       
+		       
                     foreach ($conexion->query("		    
    		            select r.rdo_id,
-                       oro.oro_ordentramo,
+                       oro.oro_ordentramo as orden,
                        c_origen.cad_nombre cad_origen,
                        c_destino.cad_nombre cad_destino
                     from recorrido r
@@ -297,7 +308,7 @@ menu();
                     and r.rdo_cad_id_destino = ".$ciudadDestino."
                     union
                     select r.rdo_id,
-                           -oro.oro_ordentramo,
+                           -oro.oro_ordentramo as orden,
                            c_origen.cad_nombre cad_origen,
                            c_destino.cad_nombre cad_destino
                     from recorrido r
@@ -311,22 +322,23 @@ menu();
                             on c_destino.cad_id = t.tra_cad_id2
                     where r.rdo_cad_id_origen = ".$ciudadDestino."
                     and r.rdo_cad_id_destino = ".$ciudadOrigen."
-                    order by r.rdo_id asc,
-                           oro.oro_ordentramo asc
+                    	order by rdo_id asc,
+                           orden asc
+                    
                         ") as $row) {
 		        
-		                if ( $ultimoRecorridoEncontrado != $row['rdo_id']) {
+		                if ( $ultimoRecorridoEncontrado != $row['RDO_ID']) {
 		                    /* Cerramos el radiobutton anterior.*/
 		                    if ($ultimoRecorridoEncontrado > 0) {
 		                        echo '<BR>';
 		                    };
 		        
         		            /* Creamos otro radiobutton.*/
-		                    $ultimoRecorridoEncontrado = $row['rdo_id'];
-		                    echo '<input type="radio" name="recorridoSeleccionado" value="'.$row['rdo_id'].'">';
-		                    echo $row['cad_origen'];		            
+		                    $ultimoRecorridoEncontrado = $row['RDO_ID'];
+		                    echo '<input type="radio" name="recorridoSeleccionado" value="'.$row['RDO_ID'].'">';
+		                    echo $row['CAD_ORIGEN'];		            
 		                };
-		                echo ' - '.$row['cad_destino'];		            
+		                echo ' - '.$row['CAD_DESTINO'];		            
 		            };
 		            if ($ultimoRecorridoEncontrado > 0) {
     		            echo '<BR>';

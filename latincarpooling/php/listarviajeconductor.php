@@ -50,18 +50,18 @@ menu();
 				vc.vcr_uio_id = ". $idUsuario .";";
 		foreach ($conexion->query($sql)	as $row) {
 			$cantidadResultados++;        
-			if ($row['vcr_importe'] > 0) {
-				$descripcionImporte = '$ '.$row['vcr_importe'].' / pasajero';
+			if ($row['VCR_IMPORTE'] > 0) {
+				$descripcionImporte = '$ '.$row['VCR_IMPORTE'].' / pasajero';
 			} else {
-				$descripcionImporte = '$ '.$row['vcr_importeviaje'];
+				$descripcionImporte = '$ '.$row['VCR_IMPORTEVIAJE'];
 			};
 			
 			echo '<tr class="filaResultado">							        
-					<td>'. $row['vje_fechamenor'].'</td>
-					<td>'.$row['vje_fechamayor'].'</td>
+					<td>'. $row['VJE_FECHAMENOR'].'</td>
+					<td>'.$row['VJE_FECHAMAYOR'].'</td>
 					<td>'.$descripcionImporte.'</td>
-					<td>'.$row['vcr_lugareslibres'].'</td>
-					<td>'.$row['vcr_cantlugares'].'</td>
+					<td>'.$row['VCR_LUGARESLIBRES'].'</td>
+					<td>'.$row['VCR_CANTLUGARES'].'</td>
 		        </tr>';
 		};                            
 	} catch (PDOException $e) {  

@@ -14,7 +14,7 @@ function carpooling_header($title){
     <body>
         <div id="container">
             <div id="sitename">
-                <h1>Viajo y Comparto</h1>
+                <h1>CARPOOLING</h1>
                 <h2>Compartiendo la experiencia de recorrer Latinoamerica</h2>
             </div>
 ';

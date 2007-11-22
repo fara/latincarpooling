@@ -242,17 +242,17 @@ menu();
                as $row) {
         
               $cantidadResultados++;        
-              if ($row['vcr_importe'] > 0) {
-                $descripcionImporte = '$ '.$row['vcr_importe'].'/pasajero';
+              if ($row['VCR_IMPORTE'] > 0) {
+                $descripcionImporte = '$ '.$row['VCR_IMPORTE'].'/pasajero';
               } else {
-                $descripcionImporte = '$ '.$row['vcr_importeviaje'];
+                $descripcionImporte = '$ '.$row['VCR_IMPORTEVIAJE'];
               };
-              if ($row['uio_sexo'] == 'M') {
+              if ($row['UIO_SEXO'] == 'M') {
                 $descripcionSexo = 'Hombre';
               } else {
                 $descripcionSexo = 'Mujer';
               };
-              if ($row['uio_esfumador'] == '1') {
+              if ($row['UIO_ESFUMADOR'] == '1') {
                 $descripcionEsFumador = 'Sí';
               } else {
                 $descripcionEsFumador = 'No';
@@ -261,19 +261,19 @@ menu();
               echo '
                 <tr class="filaResultado">							        
 					<td>
-	                    '.$row['vje_fechamenor'].'
+	                    '.$row['VJE_FECHAMENOR'].'
 					</td>
 					<td>
-			            '.$row['vje_fechamayor'].'
+			            '.$row['VJE_FECHAMAYOR'].'
 				    </td>
 					<td>
 						'.$descripcionImporte.'
 					</td>					
 					<td>
-						'.$row['vcr_lugareslibres'].'
+						'.$row['VCR_LUGARESLIBRES'].'
 					</td>					
 					<td>
-						'.$row['uio_nombreusuario'].'
+						'.$row['UIO_NOMBREUSUARIO'].'
 					</td>							
 					<td>
 						'.$descripcionSexo.'
