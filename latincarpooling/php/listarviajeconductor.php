@@ -12,15 +12,15 @@ menu();
 <?php
 	$camposOk = 0;									                    
 	/* Si se enviaron parametros.*/
-	if (hay_campos_enviados()) {
+	/*if (hay_campos_enviados()) {
 		if (!verificar_campo('usuario') ) {
 			error("Por favor, complete el id del usuario");
 		} else {
 			$camposOk = 1;	
 		};
-	};
+	};*/
 	$conexion = nuevaConexion();
-	$idUsuario = valor_campo('usuario');
+	$idUsuario = $_SESSION["idusuario"];
 	$cantidadResultados = 0;
 ?>
 <table cellpadding="1" cellspacing="1" width="100%">

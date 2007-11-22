@@ -16,20 +16,19 @@ echo '<div id="mainmenu">
 <div id="wrap">
 
 <div id="leftside">
-<a class="nav active" href="index.php">Inicio</a><span class="hide"> | </span>
-<a class="nav" href="#">Viajes</a><span class="hide"> | </span>
+<a class="nav" href="buscarviaje.php">Viajes</a><span class="hide"> | </span>
 <a class="nav sub" href="buscarviaje.php">Buscar</a><span class="hide"> | </span>
-<a class="nav sub" href="#">Mis Viajes</a><span class="hide"> | </span>
+<a class="nav sub" href="ingresarviaje.php">Nuevo</a><span class="hide"> | </span>
+<a class="nav sub" href="listarviajeconductor.php">Mis Viajes</a><span class="hide"> | </span>
 <a class="nav" href="#">Pedidos</a><span class="hide"> | </span>
-<a class="nav sub" href="#">Buscar</a><span class="hide"> | </span>
 <a class="nav sub" href="ingresarPedido.php">Nuevo</a><span class="hide"> | </span>
-<a class="nav sub" href="#">Mis Pedidos</a><span class="hide"> | </span>
+<a class="nav sub" href="listarviajepasajero.php">Mis Pedidos</a><span class="hide"> | </span>
 <a class="nav" href="#">Mis Mensajes</a><span class="hide"> | </span>
-<a class="nav sub" href="#">Recibidos</a><span class="hide"> | </span>
-<a class="nav sub" href="#">Enviados</a><span class="hide"> | </span>
+<a class="nav sub" href="listarmensajes.php?tipo=recibidos">Recibidos</a><span class="hide"> | </span>
+<a class="nav sub" href="listarmensajes.php?tipo=enviados">Enviados</a><span class="hide"> | </span>
 <a class="nav sub" href="#">Nuevo</a><span class="hide"> | </span>
 <a class="nav" href="#">Opciones</a><span class="hide"> | </span>
-<a class="nav" href="#">Salir</a><span class="hide"> | </span>
+<a class="nav" href="login.php?accion=salir">Salir</a><span class="hide"> | </span>
 <a class="nav" href="#">Novedades</a><span class="hide"> | </span>
 
 </div>

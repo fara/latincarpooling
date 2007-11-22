@@ -359,4 +359,15 @@ function campoHidden($nombreCampo, $valorCampo) {
     echo '<input type="hidden" id="'.$nombreCampo.'" name="'.$nombreCampo.'" value="'.$valorCampo.'" />';   
 };
 
+function fetchOne($conexion, $query) {
+	try {
+    	$resultado = $conexion->query($query);
+		$fila = $resultado->fetch(PDO::FETCH_ASSOC);
+  		return $fila;
+	} catch (PDOException $e) {  
+        echo '<H3>Error al obtener una fila: '.$e->getMessage().'</h3>';                
+    };
+    return '';
+};
+
 ?>
