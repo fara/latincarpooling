@@ -1,22 +1,18 @@
 <?Php
 
-set_time_limit(6000);
+/* set_time_limit(6000); AR Para que no genere un timeout al conextarse en el laboratorio. */
 
+/* AR 2007-11-24 Abre una conexion con el servidor DB2 */
 Function nuevaConexion(){	
-    $dsn = "carpooling";
-    $usuario = "carpooling";
-    $pass="metallica23";
+        
+    try {	             
+        //Conexion DB2 arobirosa.no-ip.org
+        $dbh = new PDO("ibm:DRIVER={IBM DB2 ODBC DRIVER};DATABASE=produ;HOSTNAME=127.0.0.1;PORT=50000;PROTOCOL=TCPIP;", "db2admin", "robinson24");
+            
+        //Conexion DB2 Laboratorio.
+        //$dbh = new PDO("ibm:DRIVER={IBM DB2 ODBC DRIVER};DATABASE=SABD;HOSTNAME=127.0.0.1;PORT=50001;PROTOCOL=TCPIP;", "db2admin", "sabd03");
     
-    /*
-    $dsn = "Grupo03federada";
-    $usuario = "db2admin";
-    $pass="sabd03";
-    */
-    try {	     
-        $dbh = new PDO('odbc:'.$dsn, $user, $pass);
-        /*$dbh = new PDO("ibm:DRIVER={IBM DB2 ODBC DRIVER};DATABASE=SABD;" .
-    		"HOSTNAME=127.0.0.1;PORT=50001;PROTOCOL=TCPIP;", $usuario, $pass,
-    		array (PDO::ATTR_PERSISTENT => true));*/
+        /* Cambiamos el manejo de errores. */
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
    
     } catch (PDOException $e) {  
@@ -27,15 +23,17 @@ Function nuevaConexion(){
 	return $dbh;
 }
 
+/* AR 2007-11-24 Abre una conexion con el servidor DB2 */
 Function nuevaConexionInformix(){	
-    $dsn = "Grupo3informix";
-    $usuario = "sa505103";
-    $pass="sabd03";
-          
-    try {	     
-        /*$dbh = new PDO('odbc:'.$dsn, $user, $pass);        */
-        $dbh =  new PDO("informix:host=192.168.2.2;service=1525;database=grupo03;server=on_centauro;protocol=onsoctcp;", "sa505103", "sabd03");
+    
+    try {	             
+        //Conexion Informix arobirosa.no-ip.org        
+        $dbh = new PDO("informix:host=guaderio; service=1526; database=produccion; server=ol_guaderio; protocol=onsoctcp ", "carpooling", "metallica23");        
+       
+        //Conexion Informix Laboratorio.
+        //$dbh =  new PDO("informix:host=192.168.2.2;service=1525;database=grupo03;server=on_centauro;protocol=onsoctcp;", "sa505103", "sabd03");
    
+        /* Cambiamos el manejo de errores. */
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
    
     } catch (PDOException $e) {  
@@ -209,7 +207,8 @@ function obtener_string_fecha_bd($fecha){
 	        return '';
 	};
 	list($dia, $mes, $año) = explode("/", $fecha, 3);
-	return $mes.'-'.$dia.'-'.$año;
+	//return $mes.'-'.$dia.'-'.$año; //Informix
+	return $año.'-'.$mes.'-'.$dia;
 }
 
 

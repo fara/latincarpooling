@@ -1,12 +1,17 @@
 <?Php
 
 function menu(){
-echo '<div id="mainmenu">
-</div>
-<br><br><br><br>
-Hola '; 
-echo $_SESSION["nombreusuario"];
 echo '
+
+<div id="mainmenu">
+<ul>
+<li><a class="current" href="buscarviaje.php">Viajes</a></li>
+<li><a href="listarviajepasajero.php">Pedidos</a></li>
+<li><a href="listarmensajes.php?tipo=recibidos">Mensajes</a></li>
+<li><a href="login.php?accion=salir">Salir</a></li>
+</ul>
+</div>
+
 <div id="wrap">
 
 <div id="leftside">
@@ -14,18 +19,27 @@ echo '
 <a class="nav sub" href="buscarviaje.php">Buscar</a><span class="hide"> | </span>
 <a class="nav sub" href="ingresarviaje.php">Nuevo</a><span class="hide"> | </span>
 <a class="nav sub" href="listarviajeconductor.php">Mis Viajes</a><span class="hide"> | </span>
-<a class="nav" href="#">Pedidos</a><span class="hide"> | </span>
+<a class="nav" href="listarviajepasajero.php">Pedidos</a><span class="hide"> | </span>
 <a class="nav sub" href="ingresarPedido.php">Nuevo</a><span class="hide"> | </span>
 <a class="nav sub" href="listarviajepasajero.php">Mis Pedidos</a><span class="hide"> | </span>
-<a class="nav" href="#">Mis Mensajes</a><span class="hide"> | </span>
+<a class="nav" href="listarmensajes.php?tipo=recibidos">Mis Mensajes</a><span class="hide"> | </span>
 <a class="nav sub" href="listarmensajes.php?tipo=recibidos">Recibidos</a><span class="hide"> | </span>
 <a class="nav sub" href="listarmensajes.php?tipo=enviados">Enviados</a><span class="hide"> | </span>
 <a class="nav" href="login.php?accion=salir">Salir</a><span class="hide"> | </span>
 
-
 </div>
 
 <div id="rightside">
+
+    ';
+    
+$nombreusuario = $_SESSION["nombreusuario"];
+if (trim($nombreusuario) != '') {
+    echo '<h1>Hola '.$nombreusuario.'</h1>';
+};
+echo '
+
+
 <h1> <u>Carpooling</u>
 </h1>
 <p> <strong>¿Qué es “Carpooling” o viajar en grupo?</strong><br><br>

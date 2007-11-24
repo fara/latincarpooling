@@ -1,6 +1,6 @@
 <?php
 include 'validar.php';
-/*validar_sesion(); Areco */
+validar_sesion();
 include 'header.php';
 carpooling_header("Nuevo Viaje");
 include 'func_lib.php';
@@ -13,7 +13,7 @@ menu();
 <?php
         $camposOk = 0;									                    
         /* Si se enviaron parametros.*/
-		if (hay_campos_enviados()) {										        										        
+		if (hay_campos_enviados() && (!verificar_campo('botonAtras'))) {										        										        
 		    if (!verificar_campo('paisOrigen') ) {												    
 			error("Por favor, complete el pais de origen");																			
                     } elseif (verificar_campo('validarRegiones') && !verificar_campo('regionOrigen') ) {
@@ -272,65 +272,89 @@ menu();
             </tr>
             <tr>
 			    <td> 
-                    <div align="right"><span class="intro">Recorridos:</span></div>
-                </td>			        
-                <td>
-			        ';               
-			        
-		    
-		    
-		    
-		        /* Mostramos los recorridos que de las ciudades origen y destino.*/	    
-    		    $ultimoRecorridoEncontrado = '';		    
+                    <div align="left"><span class="intro">Recorridos:</span></div>
+                </td>			                        
+            </tr>
+            <tr>              
+                <td colspan ="2"> 
+			        <p>';               
+			        		    		    		    
+		        /* Mostramos los recorridos que de las ciudades origen y destino.*/	        		    
 		        try {                        
-		        /*	
-		       $conexionInformix = nuevaConexionInformix();
-		       $consultaInformix = "EXECUTE PROCEDURE sp_calcular_recorrido (".$ciudadOrigen.",".$ciudadDestino.",".rand(1,1000).")";
-		       echo 'Areco:<br>'.$consultaInformix;
-		       $resultado = $conexionInformix->exec($consultaInformix);
-		       	*/	       
-		       
-                    foreach ($conexion->query("		    
-   		            select r.rdo_id,
-                       oro.oro_ordentramo as orden,
-                       c_origen.cad_nombre cad_origen,
-                       c_destino.cad_nombre cad_destino
-                    from recorrido r
-                    inner join ordenrecorrido oro
-                            on oro.oro_rdo_id = r.rdo_id
-                    inner join tramo t
-                            on t.tra_id = oro.oro_tra_id
-                    inner join ciudad c_origen
-                            on c_origen.cad_id = t.tra_cad_id1
-                    inner join ciudad c_destino
-                            on c_destino.cad_id = t.tra_cad_id2
-                    where r.rdo_cad_id_origen = ".$ciudadOrigen."
-                    and r.rdo_cad_id_destino = ".$ciudadDestino."
-                    union
-                    select r.rdo_id,
-                           -oro.oro_ordentramo as orden,
-                           c_origen.cad_nombre cad_origen,
-                           c_destino.cad_nombre cad_destino
-                    from recorrido r
-                    inner join ordenrecorrido oro
-                            on oro.oro_rdo_id = r.rdo_id
-                    inner join tramo t
-                            on t.tra_id = oro.oro_tra_id
-                    inner join ciudad c_origen
-                            on c_origen.cad_id = t.tra_cad_id1
-                    inner join ciudad c_destino
-                            on c_destino.cad_id = t.tra_cad_id2
-                    where r.rdo_cad_id_origen = ".$ciudadDestino."
-                    and r.rdo_cad_id_destino = ".$ciudadOrigen."
-                    	order by rdo_id asc,
-                           orden asc
+		            
+		            //AR 2007-11-24 Llamaos al SP que genera los recorridos.
+		            $conexionInformix = nuevaConexionInformix();		            
+		            $llamadaSp = " execute procedure sp_calcular_recorrido ( ".$ciudadOrigen.", ".$ciudadDestino.", ".rand(1,5000)." );";		            
+		            		            
+		            $sph= $conexionInformix->prepare($llamadaSp);
+                    $errorInformix = $conexionInformix->errorInfo();
+                    if ( $errorInformix["1"]) {
+                        throw new Exception("Fallo la llamada al SP de calculo de recorridos (prepare): ".$error["1"]);                        
+                    };        
+                    
+                    $sph->execute();
+                    $errorInformix = $conexionInformix->errorInfo();
+                    if ( $errorInformix["1"]) {
+                        throw new Exception("Fallo la llamada al SP de calculo de recorridos (execute): ".$error["1"]);                        
+                    };        
+     
+                    $filaSp = $sph->fetch(PDO::FETCH_NUM);
+                    $errorInformix = $conexionInformix->errorInfo();
+                    if ( $errorInformix["1"]) {
+                        throw new Exception("Fallo la llamada al SP de calculo de recorridos (fetch): ".$error["1"]);                        
+                    };        
+                    
+                    //Las siguientes lineas son para depurar el SP.
+                    /*if ($filaSp[0] > 0) {
+                        echo("Se generaron ".$filaSp[0]." recorridos nuevos.<BR>");
+                    } else {
+                        echo("No se generaron nuevos recorridos.<BR>");
+                    };
+		            */	
+		            		            		            
+		            /* AR 2007-11-24 Ahora buscamos los recorridos que hay en la base (nuevos y anteriores). */		       
+		            $ultimoRecorridoEncontrado = '';		    
+		            $totalDistancia = 0;
+		            $totalPeaje = 0;
+		            $fechaActualBD = obtener_string_fecha_bd(date('d/m/Y'));		            
+		            
+                    foreach ($conexion->query("		       		                                                                                   
+                         select r.rdo_id,
+                             oro.oro_ordentramo orden,
+                            c_origen.cad_nombre cad_origen,
+                            c_destino.cad_nombre cad_destino,
+                            t.tra_distancia,
+                            c.cft_costofijo
+                         from recorrido r
+                         inner join ordenrecorrido oro
+                                 on oro.oro_rdo_id = r.rdo_id
+                         inner join tramo t
+                                 on t.tra_id = oro.oro_tra_id
+                         left join costofijotramo c
+                                 on t.tra_id = c.cft_tra_id
+                                 and c.cft_vigentedesde <= '".$fechaActualBD."'
+                                 and (c.cft_vigentehasta is null or c.cft_vigentehasta >= '".$fechaActualBD."')
+                         inner join ciudad c_origen
+                                 on c_origen.cad_id = t.tra_cad_id1
+                         inner join ciudad c_destino
+                                 on c_destino.cad_id = t.tra_cad_id2
+                         where r.rdo_cad_id_origen = ".$ciudadOrigen."
+                         and r.rdo_cad_id_destino = ".$ciudadDestino."                                        
+                         order by r.rdo_id asc,
+                                 oro.oro_ordentramo asc                            
                     
                         ") as $row) {
 		        
 		                if ( $ultimoRecorridoEncontrado != $row['RDO_ID']) {
 		                    /* Cerramos el radiobutton anterior.*/
 		                    if ($ultimoRecorridoEncontrado > 0) {
-		                        echo '<BR>';
+		                        echo ' ('.$totalDistancia.' Km.';
+		                        if ($totalPeaje > 0) {
+		                             echo ' - Peajes: $ '.round($totalPeaje,2);
+		                        };
+		                        echo ')<BR>';
+		                        $totalDistancia = 0;
+		                        $totalPeaje = 0;
 		                    };
 		        
         		            /* Creamos otro radiobutton.*/
@@ -339,9 +363,17 @@ menu();
 		                    echo $row['CAD_ORIGEN'];		            
 		                };
 		                echo ' - '.$row['CAD_DESTINO'];		            
+		                $totalDistancia = $totalDistancia + $row['TRA_DISTANCIA'];
+                        $totalPeaje = $totalPeaje + $row['CFT_COSTOFIJO'];
 		            };
 		            if ($ultimoRecorridoEncontrado > 0) {
-    		            echo '<BR>';
+    		            echo ' ('.$totalDistancia.' Km.';
+		                if ($totalPeaje > 0) {
+		                    echo ' - Peajes: $ '.round($totalPeaje,2);
+		                };
+		                echo ')<BR>';
+		                $totalDistancia = 0;
+		                $totalPeaje = 0;
 	    	        } else {
 		              echo   '<h4>No se encontraron recorridos.</h4>';
 		            };
@@ -352,6 +384,7 @@ menu();
                    
             /* Botones Siguiente y Anterior */
             echo '
+                    </p>
                 </td>
             </tr>
             <tr>
