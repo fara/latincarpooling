@@ -68,3 +68,9 @@ where pce_cle_id = 3
 and pce_pis_id = 1
 order by pce_vigentedesde
 ;
+
+--Agregamos otros precios
+execute procedure dbo.spu_precio_combustible (1, 1, '01-01-2000', 1)
+execute procedure dbo.spu_precio_combustible (1, 1, '01-01-2003', 3.58)
+;
+

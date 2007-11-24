@@ -226,7 +226,9 @@ menu();
                     <div align="right"><span class="intro">Recorridos:</span></div>
                 </td>			        
                 <td>
-			        ';               
+			        ';        
+			               			        
+			        mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $_SESSION['idusuario'], 0, $paisOrigen);
 		        /* Mostramos los recorridos que de las ciudades origen y destino.*/	    
     		    $ultimoRecorridoEncontrado = '';		        		    
 		        try {                        

@@ -400,4 +400,300 @@ function fetchOne($conexion, $query) {
     return '';
 };
 
+
+function listaVehiculos($conexion, $nombreCampo, $usuario, $vehiculoSeleccionado) {
+    try {
+        echo '<select name="'.$nombreCampo.'" class="searchbox" id="'.$nombreCampo.'">';
+        foreach ($conexion->query('SELECT vlo_modelo, vlo_patente, vlo_id from vehiculo where vlo_uio_id = '.$usuario.' order by vlo_modelo') as $row) {
+            if ($vehiculoSeleccionado == $row['VLO_ID']) {
+                echo '<option value="'.$row['VLO_ID'].'" selected="selected">'.$row['VLO_MODELO'].' ('.$row['VLO_PATENTE'].') </option>';
+            } else {
+                echo '<option value="'.$row['VLO_ID'].'">'.$row['VLO_MODELO'].' ('.$row['VLO_PATENTE'].') </option>';
+            };
+        };
+        echo '</select>';
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
+    };
+};
+
+function descripcionVehiculo($conexion, $usuario, $vehiculo) {        
+    try {
+                   $resultado = $conexion->query('SELECT vlo_modelo, vlo_patente from vehiculo
+                            where vlo_uio_id = '.$usuario.'
+                            and vlo_id = '.$vehiculo);
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {                                        
+                        return ($fila['VLO_MODELO'].' ('.$fila['VLO_PATENTE'].')');
+                   };
+                   return '(Sin Vehiculo)';                   
+    } catch (PDOException $e) {          
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };    
+};
+
+function costoKmCombustible($conexion, $usuario, $vehiculo, $fecha, $pais) {        
+    try {
+                   $resultado = $conexion->query("
+                            SELECT vlo_consumo, pce_preciolitro
+                            from vehiculo
+                            inner join preciocombustible
+                                on vlo_cle_id = pce_cle_id
+                                and pce_pis_id = ".$pais." 
+                                and pce_vigentedesde <= '".obtener_string_fecha_bd($fecha)."'
+                                and (pce_vigentehasta >= '".obtener_string_fecha_bd($fecha)."' or pce_vigentehasta is null)
+                            where vlo_uio_id = ".$usuario."
+                            and vlo_id = ".$vehiculo);
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {                       
+                        return ($fila['VLO_CONSUMO'] * $fila['PCE_PRECIOLITRO'] / 100);
+                   };
+                   return 0;
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };    
+};
+
+function costoKmCombustible($conexion, $fecha, $pais) {        
+    /*
+    try {
+                   $resultado = $conexion->query("
+                            SELECT vlo_consumo, pce_preciolitro
+                            from vehiculo
+                            inner join preciocombustible
+                                on vlo_cle_id = pce_cle_id
+                                and pce_pis_id = ".$pais." 
+                                and pce_vigentedesde <= '".obtener_string_fecha_bd($fecha)."'
+                                and (pce_vigentehasta >= '".obtener_string_fecha_bd($fecha)."' or pce_vigentehasta is null)
+                            where vlo_uio_id = ".$usuario."
+                            and vlo_id = ".$vehiculo);
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {                       
+                        return ($fila['VLO_CONSUMO'] * $fila['PCE_PRECIOLITRO'] / 100);
+                   };
+                   return 0;
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };*/
+    return 0.5;    
+};
+
+function recorridoMasBarato($conexion, $ciudadOrigen, $ciudadDestino, $fecha, $costoKmCombustible) {        
+    try {
+                   $resultado = $conexion->query("
+                            select r.rdo_id
+                            from recorrido r
+                            inner join ordenrecorrido oro
+                                     on oro.oro_rdo_id = r.rdo_id
+                            inner join tramo t
+                                     on t.tra_id = oro.oro_tra_id
+                            left join costofijotramo c
+                                     on t.tra_id = c.cft_tra_id
+                                     and c.cft_vigentedesde <= '".obtener_string_fecha_bd($fecha)."'
+                                     and (c.cft_vigentehasta is null or c.cft_vigentehasta >= '".obtener_string_fecha_bd($fecha)."')
+                            inner join ciudad c_origen
+                                     on c_origen.cad_id = t.tra_cad_id1
+                            inner join ciudad c_destino
+                                     on c_destino.cad_id = t.tra_cad_id2
+                            where r.rdo_cad_id_origen = ".$ciudadOrigen."
+                            and r.rdo_cad_id_destino = ".$ciudadDestino."
+                                group by rdo_id
+                            order by (sum(t.tra_distancia) * ".$costoKmCombustible." + sum(c.cft_costofijo)) ASC
+                            Fetch first 1 rows only
+                            ");
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {
+                        return $fila['RDO_ID'];
+                   };
+                   return 0;
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };    
+};
+
+function recorridoMasCorto($conexion, $ciudadOrigen, $ciudadDestino) {        
+    try {
+                   $resultado = $conexion->query("
+                            select r.rdo_id
+                            from recorrido r
+                            inner join ordenrecorrido oro
+                                     on oro.oro_rdo_id = r.rdo_id
+                            inner join tramo t
+                                     on t.tra_id = oro.oro_tra_id                            
+                            inner join ciudad c_origen
+                                     on c_origen.cad_id = t.tra_cad_id1
+                            inner join ciudad c_destino
+                                     on c_destino.cad_id = t.tra_cad_id2
+                            where r.rdo_cad_id_origen = ".$ciudadOrigen."
+                            and r.rdo_cad_id_destino = ".$ciudadDestino."
+                                group by rdo_id
+                            order by sum(t.tra_distancia) ASC
+                            Fetch first 1 rows only
+                            ");
+                   $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+                   if ($fila != '') {
+                        return $fila['RDO_ID'];
+                   };
+                   return 0;
+    } catch (PDOException $e) {  
+        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
+    };    
+};
+
+
+//AR 2007-11-23 Si el vehiculo es cero, se considera que fue llamada por un pasajero.
+function mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $usuario, $vehiculo, $paisOrigen) {
+    /* Mostramos los recorridos que de las ciudades origen y destino.*/	        		    
+   try {                        
+       
+       //AR 2007-11-24 Llamaos al SP que genera los recorridos.
+       $conexionInformix = nuevaConexionInformix();		            
+       $llamadaSp = " execute procedure sp_calcular_recorrido ( ".$ciudadOrigen.", ".$ciudadDestino.", ".rand(1,5000)." );";		            
+       		            
+       $sph= $conexionInformix->prepare($llamadaSp);
+       $errorInformix = $conexionInformix->errorInfo();
+       if ( $errorInformix["1"]) {
+           throw new Exception("Fallo la llamada al SP de calculo de recorridos (prepare): ".$error["1"]);                        
+       };        
+       
+       $sph->execute();
+       $errorInformix = $conexionInformix->errorInfo();
+       if ( $errorInformix["1"]) {
+           throw new Exception("Fallo la llamada al SP de calculo de recorridos (execute): ".$error["1"]);                        
+       };        
+
+       $filaSp = $sph->fetch(PDO::FETCH_NUM);
+       $errorInformix = $conexionInformix->errorInfo();
+       if ( $errorInformix["1"]) {
+           throw new Exception("Fallo la llamada al SP de calculo de recorridos (fetch): ".$error["1"]);                        
+       };        
+       
+       //Las siguientes lineas son para depurar el SP.
+       /*if ($filaSp[0] > 0) {
+           echo("Se generaron ".$filaSp[0]." recorridos nuevos.<BR>");
+       } else {
+           echo("No se generaron nuevos recorridos.<BR>");
+       };
+       */	
+       		            		            
+       /* AR 2007-11-24 Ahora buscamos los recorridos que hay en la base (nuevos y anteriores). */		       
+       $ultimoRecorridoEncontrado = '';		    
+       $totalDistancia = 0;
+       $totalPeaje = 0;
+       $totalCosto = 0;
+       $fechaActualBD = obtener_string_fecha_bd(date('d/m/Y'));		          
+       if ($vehiculo > 0) {
+            $costoKmCombustible = costoKmCombustible($conexion, $usuario, $vehiculo, date('d/m/Y'), $paisOrigen);    		                		            
+       } else {
+            $costoKmCombustible = costoKmCombustiblePasajero($conexion, date('d/m/Y'), $paisOrigen);    		                		            
+       };
+       
+       $recorridoMasBarato = recorridoMasBarato($conexion, $ciudadOrigen, $ciudadDestino, date('d/m/Y'), $costoKmCombustible);
+       $recorridoMasCorto = recorridoMasCorto($conexion, $ciudadOrigen, $ciudadDestino);
+       
+       foreach ($conexion->query("		       		                                                                                   
+            select r.rdo_id,
+                oro.oro_ordentramo orden,
+               c_origen.cad_nombre cad_origen,
+               c_destino.cad_nombre cad_destino,
+               t.tra_distancia,
+               c.cft_costofijo
+            from recorrido r
+            inner join ordenrecorrido oro
+                    on oro.oro_rdo_id = r.rdo_id
+            inner join tramo t
+                    on t.tra_id = oro.oro_tra_id
+            left join costofijotramo c
+                    on t.tra_id = c.cft_tra_id
+                    and c.cft_vigentedesde <= '".$fechaActualBD."'
+                    and (c.cft_vigentehasta is null or c.cft_vigentehasta >= '".$fechaActualBD."')
+            inner join ciudad c_origen
+                    on c_origen.cad_id = t.tra_cad_id1
+            inner join ciudad c_destino
+                    on c_destino.cad_id = t.tra_cad_id2
+            where r.rdo_cad_id_origen = ".$ciudadOrigen."
+            and r.rdo_cad_id_destino = ".$ciudadDestino."                                        
+            order by r.rdo_id asc,
+                    oro.oro_ordentramo asc                            
+       
+           ") as $row) {
+      
+           if ( $ultimoRecorridoEncontrado != $row['RDO_ID']) {
+               /* Cerramos el radiobutton anterior.*/
+               if ($ultimoRecorridoEncontrado > 0) {
+                   if ($costoKmCombustible > 0) {
+                       $costoTotal = ($costoKmCombustible * $totalDistancia) + $totalPeaje;
+                   };
+                   echo ' ('.$totalDistancia.' Km.';
+                   if ($totalPeaje > 0) {
+                       echo ' - Peajes: $ '.round($totalPeaje,2);
+                   };
+                   if ($recorridoMasBarato == $ultimoRecorridoEncontrado) {
+                       echo ' - Más Barato';
+                   };
+                   if ($recorridoMasCorto == $ultimoRecorridoEncontrado) {
+                       echo ' - Más Corto';
+                   };    		                        
+                   echo ')';
+                   if ($costoKmCombustible > 0) {
+                       echo ' <STRONG>$ '.round($costoTotal,2).'</STRONG>';
+                   };
+                   if ($recorridoMasBarato == $ultimoRecorridoEncontrado || $recorridoMasCorto == $ultimoRecorridoEncontrado ) {
+                       echo '</U>';
+                   };    
+                   echo '<BR>';
+                   $totalDistancia = 0;
+                   $totalPeaje = 0;
+                   $totalTotal = 0;
+               };
+      
+            /* Creamos otro radiobutton.*/
+               $ultimoRecorridoEncontrado = $row['RDO_ID'];
+               if ($recorridoMasBarato == $ultimoRecorridoEncontrado || $recorridoMasCorto == $ultimoRecorridoEncontrado ) {
+                   echo '<U>';
+               };
+               echo '<input type="radio" name="recorridoSeleccionado" value="'.$row['RDO_ID'].'"';
+               if ($recorridoMasBarato == $ultimoRecorridoEncontrado) {
+                   echo " checked";
+               };
+               echo '>';
+               echo $row['CAD_ORIGEN'];		            
+           };
+           echo ' - '.$row['CAD_DESTINO'];		            
+           $totalDistancia = $totalDistancia + $row['TRA_DISTANCIA'];
+           $totalPeaje = $totalPeaje + $row['CFT_COSTOFIJO'];
+       };
+       if ($ultimoRecorridoEncontrado > 0) {
+           if ($costoKmCombustible > 0) {
+               $costoTotal = ($costoKmCombustible * $totalDistancia) + $totalPeaje;
+           };
+           echo ' ('.$totalDistancia.' Km.';
+           if ($totalPeaje > 0) {
+               echo ' - Peajes: $ '.round($totalPeaje,2);
+           };
+           if ($recorridoMasBarato == $ultimoRecorridoEncontrado) {
+               echo ' - Más Barato';
+           };
+           if ($recorridoMasCorto == $ultimoRecorridoEncontrado) {
+               echo ' - Más Corto';
+           };    		                        
+           echo ')';
+           if ($costoKmCombustible > 0) {
+               echo ' <STRONG>$ '.round($costoTotal,2).'</STRONG>';
+           };
+           if ($recorridoMasBarato == $ultimoRecorridoEncontrado || $recorridoMasCorto == $ultimoRecorridoEncontrado) {
+               echo '</U>';
+           };    
+           echo '<BR>';
+           $totalDistancia = 0;
+           $totalPeaje = 0;
+           $totalTotal = 0;
+       } else {
+         echo   '<h4>No se encontraron recorridos.</h4>';
+       };
+   } catch (PDOException $e) {  
+       echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
+   }; 
+};
+
 ?>

@@ -59,7 +59,8 @@ create procedure spiu_vehiculo
 
 --  VALIDO QUE NO EXISTA EL VEHICULO
     if exists (select 1 from vehiculo v
-                    where v.vlo_id = id_vehiculo) then
+                    where v.vlo_uio_id = id_usuario
+                    and v.vlo_id = id_vehiculo) then
        RAISE EXCEPTION -746, 0, 'Ya existe el vehiculo. [1]';
        return -1;
     end if;

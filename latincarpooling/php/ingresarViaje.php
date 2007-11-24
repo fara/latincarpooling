@@ -45,11 +45,13 @@ menu();
                     } elseif (verificar_campo('validarCampos') && verificar_campo('cantidadLugares') && !es_numero_entero($_REQUEST['cantidadesLugares']) ) {
                         error("La cantidad de lugares debe ser un número.");																			                        
                     } elseif (verificar_campo('validarCampos') && verificar_campo('cantidadLugares') && (valor_campo('cantidadLugares') < 0) ) {
-                        error("La cantidad de lugares no puede ser negativa.");																			                        
-                    } elseif (verificar_campo('validarCampos') && !verificar_campo('recorridoSeleccionado') ) {
+                        error("La cantidad de lugares no puede ser negativa.");																	
+                    } elseif (verificar_campo('validarCampos') && !verificar_campo('vehiculo') ) {
+                        error("Por favor, seleccione un vehiculo.");																					                        
+                    } elseif (verificar_campo('validarRecorrido') && !verificar_campo('recorridoSeleccionado') ) {
                         error("Por favor, seleccione un recorrido.");																			
                     } else {
-                        if (verificar_campo('validarRegiones') && verificar_campo('validarCiudades') && verificar_campo('validarCampos')) {
+                        if (verificar_campo('validarRegiones') && verificar_campo('validarCiudades') && verificar_campo('validarCampos')  && verificar_campo('validarRecorrido')) {
                             $camposOk = 1;	
                         };
                     };
@@ -84,10 +86,14 @@ menu();
             $cantidadLugares = 1;
         };
         $recorridoSeleccionado = valor_campo('recorridoSeleccionado');
+        $vehiculo = valor_campo('vehiculo');
+        $usuario = $_SESSION['idusuario'];
         
         /* Si seleccionaron el boton atras, reseteamos algunos campos...*/
         if (verificar_campo('botonAtras')) {
-          if (verificar_campo('validarCampos')) {
+          if (verificar_campo('validarRecorrido')) {
+            $vehiculo = 0;            
+          } elseif (verificar_campo('validarCampos')) {
             $ciudadOrigen = 0;
             $ciudadDestino = 0;            
           } elseif (verificar_campo('validarCiudades')) {            
@@ -163,7 +169,7 @@ menu();
         } else {                
             /* Comienzo del formulario.*/
             echo '
-        <form name="formingresarviaje" method="post" action="">            
+        <form name="formingresarviaje" method="get" action="">            
         <table cellpadding="1" cellspacing="1" width="500" bordercolor="#999999" align="center" valign="top">
             <tr>
 			    <td width="25%"> 
@@ -272,114 +278,35 @@ menu();
             </tr>
             <tr>
 			    <td> 
+                    <div align="right"><span class="intro">Vehiculo:</span></div>
+                 </td>
+		        <td>					  			     
+		        ';
+		        if ($vehiculo > 0) {
+		            echo descripcionVehiculo($conexion, $usuario, $vehiculo);
+		            campoHidden('vehiculo', $vehiculo);
+		        } else {
+		            listaVehiculos($conexion, 'vehiculo', $usuario, $vehiculo);		            		            
+		        };
+		        echo '			        
+                </td>
+            </tr>
+                ';
+                //Si tenemos un vehiculo, calculamos los recorridos.
+                if ($vehiculo > 0) { 
+                    campoHidden('validarRecorrido', 'validarRecorrido');
+                    echo '
+            <tr>
+			    <td> 
                     <div align="left"><span class="intro">Recorridos:</span></div>
                 </td>			                        
             </tr>
             <tr>              
                 <td colspan ="2"> 
 			        <p>';               
-			        		    		    		    
-		        /* Mostramos los recorridos que de las ciudades origen y destino.*/	        		    
-		        try {                        
-		            
-		            //AR 2007-11-24 Llamaos al SP que genera los recorridos.
-		            $conexionInformix = nuevaConexionInformix();		            
-		            $llamadaSp = " execute procedure sp_calcular_recorrido ( ".$ciudadOrigen.", ".$ciudadDestino.", ".rand(1,5000)." );";		            
-		            		            
-		            $sph= $conexionInformix->prepare($llamadaSp);
-                    $errorInformix = $conexionInformix->errorInfo();
-                    if ( $errorInformix["1"]) {
-                        throw new Exception("Fallo la llamada al SP de calculo de recorridos (prepare): ".$error["1"]);                        
-                    };        
-                    
-                    $sph->execute();
-                    $errorInformix = $conexionInformix->errorInfo();
-                    if ( $errorInformix["1"]) {
-                        throw new Exception("Fallo la llamada al SP de calculo de recorridos (execute): ".$error["1"]);                        
-                    };        
-     
-                    $filaSp = $sph->fetch(PDO::FETCH_NUM);
-                    $errorInformix = $conexionInformix->errorInfo();
-                    if ( $errorInformix["1"]) {
-                        throw new Exception("Fallo la llamada al SP de calculo de recorridos (fetch): ".$error["1"]);                        
-                    };        
-                    
-                    //Las siguientes lineas son para depurar el SP.
-                    /*if ($filaSp[0] > 0) {
-                        echo("Se generaron ".$filaSp[0]." recorridos nuevos.<BR>");
-                    } else {
-                        echo("No se generaron nuevos recorridos.<BR>");
-                    };
-		            */	
-		            		            		            
-		            /* AR 2007-11-24 Ahora buscamos los recorridos que hay en la base (nuevos y anteriores). */		       
-		            $ultimoRecorridoEncontrado = '';		    
-		            $totalDistancia = 0;
-		            $totalPeaje = 0;
-		            $fechaActualBD = obtener_string_fecha_bd(date('d/m/Y'));		            
-		            
-                    foreach ($conexion->query("		       		                                                                                   
-                         select r.rdo_id,
-                             oro.oro_ordentramo orden,
-                            c_origen.cad_nombre cad_origen,
-                            c_destino.cad_nombre cad_destino,
-                            t.tra_distancia,
-                            c.cft_costofijo
-                         from recorrido r
-                         inner join ordenrecorrido oro
-                                 on oro.oro_rdo_id = r.rdo_id
-                         inner join tramo t
-                                 on t.tra_id = oro.oro_tra_id
-                         left join costofijotramo c
-                                 on t.tra_id = c.cft_tra_id
-                                 and c.cft_vigentedesde <= '".$fechaActualBD."'
-                                 and (c.cft_vigentehasta is null or c.cft_vigentehasta >= '".$fechaActualBD."')
-                         inner join ciudad c_origen
-                                 on c_origen.cad_id = t.tra_cad_id1
-                         inner join ciudad c_destino
-                                 on c_destino.cad_id = t.tra_cad_id2
-                         where r.rdo_cad_id_origen = ".$ciudadOrigen."
-                         and r.rdo_cad_id_destino = ".$ciudadDestino."                                        
-                         order by r.rdo_id asc,
-                                 oro.oro_ordentramo asc                            
-                    
-                        ") as $row) {
+			    mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $usuario, $vehiculo, $paisOrigen);
 		        
-		                if ( $ultimoRecorridoEncontrado != $row['RDO_ID']) {
-		                    /* Cerramos el radiobutton anterior.*/
-		                    if ($ultimoRecorridoEncontrado > 0) {
-		                        echo ' ('.$totalDistancia.' Km.';
-		                        if ($totalPeaje > 0) {
-		                             echo ' - Peajes: $ '.round($totalPeaje,2);
-		                        };
-		                        echo ')<BR>';
-		                        $totalDistancia = 0;
-		                        $totalPeaje = 0;
-		                    };
-		        
-        		            /* Creamos otro radiobutton.*/
-		                    $ultimoRecorridoEncontrado = $row['RDO_ID'];
-		                    echo '<input type="radio" name="recorridoSeleccionado" value="'.$row['RDO_ID'].'">';
-		                    echo $row['CAD_ORIGEN'];		            
-		                };
-		                echo ' - '.$row['CAD_DESTINO'];		            
-		                $totalDistancia = $totalDistancia + $row['TRA_DISTANCIA'];
-                        $totalPeaje = $totalPeaje + $row['CFT_COSTOFIJO'];
-		            };
-		            if ($ultimoRecorridoEncontrado > 0) {
-    		            echo ' ('.$totalDistancia.' Km.';
-		                if ($totalPeaje > 0) {
-		                    echo ' - Peajes: $ '.round($totalPeaje,2);
-		                };
-		                echo ')<BR>';
-		                $totalDistancia = 0;
-		                $totalPeaje = 0;
-	    	        } else {
-		              echo   '<h4>No se encontraron recorridos.</h4>';
-		            };
-		        } catch (PDOException $e) {  
-                    echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
-                };    			    
+                }; /* if (vehiculo > 0) */
             }; /* if (($paisOrigen >= 1) && ($paisDestino >= 1) && ($regionOrigen >= 1) && ($regionDestino >= 1) && ($ciudadOrigen >= 1) && ($ciudadDestino >= 1)) { */
                    
             /* Botones Siguiente y Anterior */
@@ -401,7 +328,8 @@ menu();
 	  
 	        if (($paisOrigen >= 1) && ($paisDestino >= 1) &&
                 ($regionOrigen >= 1) && ($regionDestino >= 1) &&
-                ($ciudadOrigen >= 1) && ($ciudadDestino >= 1)) {        
+                ($ciudadOrigen >= 1) && ($ciudadDestino >= 1) &&
+                ($vehiculo >= 1)) {        
 	            /* Solo podemos finalizar si encontramos al menos un recorrido valido. */
 	            if ($ultimoRecorridoEncontrado > 0) {
 	                echo          '<input class="searchbutton" type="submit" name="botonContinuar" value="Finalizar">';
