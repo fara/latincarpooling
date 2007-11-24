@@ -1,5 +1,5 @@
-drop procedure dbo.spd_usuario_mensajeria;
-create procedure dbo.spd_usuario_mensajeria
+drop procedure spd_usuario_mensajeria;
+create procedure spd_usuario_mensajeria
 (
     id_usuario integer,
     id_programa integer

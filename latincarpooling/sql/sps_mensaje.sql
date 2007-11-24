@@ -5,7 +5,7 @@ create procedure sps_mensaje
     id_rem      integer,
     id_mje      integer
 
-) returns DATE, VARCHAR, BOOLEAN, BLOB;
+) returns DATE, VARCHAR, BOOLEAN, VARCHAR;
 
         define fecha like mensaje.mje_fecha;
         define asunto like mensaje.mje_asunto;
@@ -19,7 +19,7 @@ create procedure sps_mensaje
        RAISE EXCEPTION -746, 0, 'No existe el usuario destino. [27]';
        return 0000-00-00, '', 'f', '';
     end if;
-    
+
     if not exists (select 1
                     from usuario u
                     where u.uio_id = id_rem) then
@@ -34,9 +34,9 @@ create procedure sps_mensaje
        return 0000-00-00, '', 'f', '';
     end if;
 
-    
 
-        
+
+
         SELECT mje_fecha, mje_asunto, mje_fueleido, mje_texto
         INTO fecha, asunto, leido, texto
         FROM mensaje
@@ -59,10 +59,10 @@ document
 'Resultados:        Fecha, asunto, marca de lectura y texto del mensaje                 ',
 '                                                                                       ',
 'Errores Reportados:                                                                    ',
-'                    -	No existe el usuario remitente.                                 ',
-'                    -	No existe el usuario destinatario.                              ',
-'                    -	No existe el mensaje.                                        ',
+'                    -  No existe el usuario remitente.                                 ',
+'                    -  No existe el usuario destinatario.                              ',
+'                    -  No existe el mensaje.                                        ',
 '                                                                                       ',
-'                                                                                       ',
+'                                                                                       '
 with listing in 'informix_warn'
 ;

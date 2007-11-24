@@ -3,7 +3,7 @@ drop procedure sps_verificar_usuario
 create procedure sps_verificar_usuario
 (
     nombre_usuario char(20),
-    contrasena_hash char(255)
+    contrasena_hash char(254)
 
 ) returning integer;
 
@@ -54,22 +54,31 @@ with listing in 'informix_warn'
 ;
 
 -- INFORMIX --
---DROP FUNCTION DBO.VERIFICAR_USUARIO
-CREATE FUNCTION DBO.VERIFICAR_USUARIO ( u char(20), p char(200))
+--DROP FUNCTION VERIFICAR_USUARIO
+CREATE FUNCTION VERIFICAR_USUARIO ( username char(20), password char(254))
 RETURNING integer;
-RETURN SPS_VERIFICAR_USUARIO(u, p);
-END FUNCTION;
+RETURN SPS_VERIFICAR_USUARIO(username, password);
+END FUNCTION
+;
+
+--Probar funcion en informix
+select VERIFICAR_USUARIO('tester', 'guionbajo') from systables WHERE tabid = 1;
+
 -- DB2 --
 --drop FUNCTION VERIFICAR_UIO
-create FUNCTION DB2ADMIN.VERIFICAR_UIO2 (varchar(20), varchar(200))
+create FUNCTION DB2ADMIN.VERIFICAR_UIO (varchar(20), varchar(254))
 RETURNS integer
 AS TEMPLATE
 DETERMINISTIC
-NO EXTERNAL ACTION
+--NO EXTERNAL ACTION
 
-CREATE FUNCTION MAPPING VERIFICAR_UIO_2 FOR VERIFICAR_UIO2
+--DROP FUNCTION MAPPING VERIFICAR_UIO_M
+CREATE FUNCTION MAPPING VERIFICAR_UIO_M FOR VERIFICAR_UIO
 SERVER TYPE INFORMIX OPTIONS (REMOTE_NAME 'VERIFICAR_USUARIO')
+-- Tabla dummy.
+CREATE NICKNAME DB2ADMIN.IFXSYSTABLES FOR IFXGUADERIO."informix"."systables";
+
 -- VALIDACION
-SELECT  VERIFICAR_UIO2('tester', 'guionbajo'), count(*)  FROM USUARIO
+SELECT  VERIFICAR_UIO('tester', 'guionbajo') FROM ifxsystables where tabid = 1
 
 

@@ -66,6 +66,6 @@ document
 '                    -  No existe el mensaje.                                           ',
 '                    -  El mensaje no puede ser borrado. Debe ser el usuario            ',
 '                       destinatario para poder hacerlo.                                ',
-'                                                                                       ',
+'                                                                                       '
 with listing in 'informix_warn'
 ;

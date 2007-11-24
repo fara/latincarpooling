@@ -42,22 +42,22 @@ create procedure sps_usuario
 
     FOREACH
         SELECT uio_id,uio_nombre,uio_apellido,uio_nombreusuario,uio_contrasena,
-		uio_email,uio_telpersonal,uio_tellaboral,uio_telcelular,uio_sexo,
-		uio_esfumador,uio_calle,uio_callealtura,uio_departamento,uio_codigopostal,
-		uio_numerodoc,uio_nacionalidad,uio_info_visible,uio_tdo_id,uio_cad_id,
-		uio_mailverificado,uio_chequeofrec,uio_piso
+                uio_email,uio_telpersonal,uio_tellaboral,uio_telcelular,uio_sexo,
+                uio_esfumador,uio_calle,uio_callealtura,uio_departamento,uio_codigopostal,
+                uio_numerodoc,uio_nacionalidad,uio_info_visible,uio_tdo_id,uio_cad_id,
+                uio_mailverificado,uio_chequeofrec,uio_piso
         INTO id,nombre,apellido,nombreusuario,contrasena,
-		email,telpersonal,tellaboral,telcelular,sexo,
-		esfumador,calle,callealtura,departamento,codigopostal,
-		numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
-		mailverificado,chequeofrec,piso
+                email,telpersonal,tellaboral,telcelular,sexo,
+                esfumador,calle,callealtura,departamento,codigopostal,
+                numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
+                mailverificado,chequeofrec,piso
         FROM usuario
         WHERE uio_id = id_usuario
         RETURN id,nombre,apellido,nombreusuario,contrasena,
-		email,telpersonal,tellaboral,telcelular,sexo,
-		esfumador,calle,callealtura,departamento,codigopostal,
-		numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
-		mailverificado,chequeofrec,piso
+                email,telpersonal,tellaboral,telcelular,sexo,
+                esfumador,calle,callealtura,departamento,codigopostal,
+                numerodoc,nacionalidad,info_visible,tdo_id,cad_id,
+                mailverificado,chequeofrec,piso
         WITH RESUME;
     END FOREACH;
 

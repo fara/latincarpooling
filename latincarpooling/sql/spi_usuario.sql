@@ -11,7 +11,7 @@ create procedure spi_usuario
     telefono_celular        char(25),
     telefono_laboral        char(25),
     es_fumador              boolean,
-    sexo	            char(1),
+    sexo                    char(1),
     direccion_calle         varchar(100),
     direccion_altura        int,
     direccion_piso          smallint,
@@ -83,7 +83,7 @@ create procedure spi_usuario
 
    insert into usuario
         (   uio_id,
-	    uio_nombreusuario,
+            uio_nombreusuario,
             uio_apellido,
             uio_nombre,
             uio_contrasena,
@@ -94,7 +94,7 @@ create procedure spi_usuario
             uio_telcelular,
             uio_tellaboral,
             uio_esfumador,
-	    uio_sexo,
+            uio_sexo,
             uio_calle,
             uio_callealtura,
             uio_piso,
@@ -107,7 +107,7 @@ create procedure spi_usuario
             uio_info_visible
         ) values
         (   nuevo_id,
-	    alias_usuario,
+            alias_usuario,
             apellido,
             nombre,
             contrasena,
@@ -118,7 +118,7 @@ create procedure spi_usuario
             telefono_celular,
             telefono_laboral,
             es_fumador,
-	    sexo,
+            sexo,
             direccion_calle,
             direccion_altura,
             direccion_piso,
@@ -149,7 +149,7 @@ document
 '                   telefono_celular            Telefono celular                        ',
 '                   telefono_laboral            Telefono laboral                        ',
 '                   es_fumador                  Si el usuario es fumador                ',
-'                   sexo	                Sexo			                ',
+'                   sexo                        Sexo                                    ',
 '                   direccion_calle             Domicilio - Calle                       ',
 '                   direccion_altura            Domicilio - Altura                      ',
 '                   direccion_piso              Domicilio - Piso                        ',

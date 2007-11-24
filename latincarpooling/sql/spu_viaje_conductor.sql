@@ -1,7 +1,7 @@
 -- spu_viaje_conductor
-drop procedure dbo.spu_viaje_conductor;
+drop procedure spu_viaje_conductor;
 
-create procedure dbo.spu_viaje_conductor
+create procedure spu_viaje_conductor
 (
     id_viaje LIKE viaje.vje_id,
     id_conductor LIKE usuario.uio_id,

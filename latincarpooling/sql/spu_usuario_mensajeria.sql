@@ -1,6 +1,6 @@
-drop procedure dbo.spu_usuario_mensajeria
+drop procedure spu_usuario_mensajeria
 ;
-create procedure dbo.spu_usuario_mensajeria
+create procedure spu_usuario_mensajeria
 (
     id_usuario integer,
     id_programa integer,

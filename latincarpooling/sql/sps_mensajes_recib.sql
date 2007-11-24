@@ -19,14 +19,14 @@ create procedure sps_mensajes_recib
     end if;
 
 
-     
-	FOREACH
-        SELECT mje_uio_id_rem, mje_id, mje_fueleido, mje_fecha, mje_asunto 
-	INTO rem, id_mje, leido, fecha, asunto
+
+        FOREACH
+        SELECT mje_uio_id_rem, mje_id, mje_fueleido, mje_fecha, mje_asunto
+        INTO rem, id_mje, leido, fecha, asunto
         FROM mensaje
         WHERE
             mje_uio_id_dest = id_dest
-	ORDER BY mje_fecha
+        ORDER BY mje_fecha
 
         RETURN rem, id_mje, leido, fecha, asunto WITH RESUME;
     END FOREACH;
@@ -46,8 +46,8 @@ document
 'Resultados:        Remitente, ID del mensaje, marca de lectura, fecha y asunto         ',
 '                                                                                       ',
 'Errores Reportados:                                                                    ',
-'                    -	No existe el usuario destinatario.                              ',
+'                    -  No existe el usuario destinatario.                              ',
 '                                                                                       ',
-'                                                                                       ',
+'                                                                                       '
 with listing in 'informix_warn'
 ;
