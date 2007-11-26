@@ -454,28 +454,24 @@ function costoKmCombustible($conexion, $usuario, $vehiculo, $fecha, $pais) {
     };    
 };
 
-function costoKmCombustible($conexion, $fecha, $pais) {        
-    /*
+function costoKmCombustiblePasajero($conexion, $fecha, $pais) {        
     try {
                    $resultado = $conexion->query("
-                            SELECT vlo_consumo, pce_preciolitro
-                            from vehiculo
-                            inner join preciocombustible
-                                on vlo_cle_id = pce_cle_id
-                                and pce_pis_id = ".$pais." 
-                                and pce_vigentedesde <= '".obtener_string_fecha_bd($fecha)."'
-                                and (pce_vigentehasta >= '".obtener_string_fecha_bd($fecha)."' or pce_vigentehasta is null)
-                            where vlo_uio_id = ".$usuario."
-                            and vlo_id = ".$vehiculo);
+                            SELECT pce_preciolitro
+                            from preciocombustible
+                            where pce_cle_id = 1
+                            and pce_pis_id = ".$pais." 
+                            and pce_vigentedesde <= '".obtener_string_fecha_bd($fecha)."'
+                            and (pce_vigentehasta >= '".obtener_string_fecha_bd($fecha)."' or pce_vigentehasta is null)
+                            ");
                    $fila = $resultado->fetch(PDO::FETCH_ASSOC);
                    if ($fila != '') {                       
-                        return ($fila['VLO_CONSUMO'] * $fila['PCE_PRECIOLITRO'] / 100);
+                        return (7 * $fila['PCE_PRECIOLITRO'] / 100);
                    };
                    return 0;
     } catch (PDOException $e) {  
         echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';        
-    };*/
-    return 0.5;    
+    };
 };
 
 function recorridoMasBarato($conexion, $ciudadOrigen, $ciudadDestino, $fecha, $costoKmCombustible) {        
@@ -590,6 +586,7 @@ function mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $usuario, $
        
        $recorridoMasBarato = recorridoMasBarato($conexion, $ciudadOrigen, $ciudadDestino, date('d/m/Y'), $costoKmCombustible);
        $recorridoMasCorto = recorridoMasCorto($conexion, $ciudadOrigen, $ciudadDestino);
+       $cantidadRecorridos = 0;
        
        foreach ($conexion->query("		       		                                                                                   
             select r.rdo_id,
@@ -619,6 +616,7 @@ function mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $usuario, $
            ") as $row) {
       
            if ( $ultimoRecorridoEncontrado != $row['RDO_ID']) {
+           	$cantidadRecorridos++;
                /* Cerramos el radiobutton anterior.*/
                if ($ultimoRecorridoEncontrado > 0) {
                    if ($costoKmCombustible > 0) {
@@ -688,11 +686,14 @@ function mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $usuario, $
            $totalDistancia = 0;
            $totalPeaje = 0;
            $totalTotal = 0;
+           return $cantidadRecorridos;
        } else {
          echo   '<h4>No se encontraron recorridos.</h4>';
+         return 0;
        };
    } catch (PDOException $e) {  
        echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
+       return 0;
    }; 
 };
 

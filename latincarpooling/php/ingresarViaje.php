@@ -304,7 +304,7 @@ menu();
             <tr>              
                 <td colspan ="2"> 
 			        <p>';               
-			    mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $usuario, $vehiculo, $paisOrigen);
+			    $cantidadRecorridos = mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $usuario, $vehiculo, $paisOrigen);
 		        
                 }; /* if (vehiculo > 0) */
             }; /* if (($paisOrigen >= 1) && ($paisDestino >= 1) && ($regionOrigen >= 1) && ($regionDestino >= 1) && ($ciudadOrigen >= 1) && ($ciudadDestino >= 1)) { */
@@ -331,7 +331,7 @@ menu();
                 ($ciudadOrigen >= 1) && ($ciudadDestino >= 1) &&
                 ($vehiculo >= 1)) {        
 	            /* Solo podemos finalizar si encontramos al menos un recorrido valido. */
-	            if ($ultimoRecorridoEncontrado > 0) {
+	            if ($cantidadRecorridos > 0) {
 	                echo          '<input class="searchbutton" type="submit" name="botonContinuar" value="Finalizar">';
 	            };
 	        } else {

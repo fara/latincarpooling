@@ -13,7 +13,7 @@ menu();
 <?php
         $camposOk = 0;									                    
         /* Si se enviaron parametros.*/
-		if (hay_campos_enviados()) {										        										        
+		if (hay_campos_enviados() && !verificar_campo('botonAtras')) {										        										        
 		            if (!verificar_campo('paisOrigen') ) {												    
 						error("Por favor, complete el pais de origen");																			
                     } elseif (verificar_campo('validarRegiones') && !verificar_campo('regionOrigen') ) {
@@ -228,51 +228,7 @@ menu();
                 <td>
 			        ';        
 			               			        
-			        mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $_SESSION['idusuario'], 0, $paisOrigen);
-		        /* Mostramos los recorridos que de las ciudades origen y destino.*/	    
-    		    $ultimoRecorridoEncontrado = '';		        		    
-		        try {                        
-                    foreach ($conexion->query("		    
-   		            select r.rdo_id,
-                       oro.oro_ordentramo orden,                       
-                       c_origen.cad_nombre cad_origen,
-                       c_destino.cad_nombre cad_destino
-                    from recorrido r
-                    inner join ordenrecorrido oro
-                            on oro.oro_rdo_id = r.rdo_id
-                    inner join tramo t
-                            on t.tra_id = oro.oro_tra_id
-                    inner join ciudad c_origen
-                            on c_origen.cad_id = t.tra_cad_id1
-                    inner join ciudad c_destino
-                            on c_destino.cad_id = t.tra_cad_id2
-                    where r.rdo_cad_id_origen = ".$ciudadOrigen."
-                    and r.rdo_cad_id_destino = ".$ciudadDestino."                    
-                    order by r.rdo_id asc,
-                           oro.oro_ordentramo asc
-                        ") as $row) {
-		        
-		                if ( $ultimoRecorridoEncontrado != $row['RDO_ID']) {
-		                    /* Cerramos el radiobutton anterior.*/
-		                    if ($ultimoRecorridoEncontrado > 0) {
-		                        echo '<BR>';
-		                    };
-		        
-        		            /* Creamos otro radiobutton.*/
-		                    $ultimoRecorridoEncontrado = $row['RDO_ID'];
-		                    echo '<input type="radio" name="recorridoSeleccionado" value="'.$row['RDO_ID'].'">';
-		                    echo $row['CAD_ORIGEN'];		            
-		                };
-		                echo ' - '.$row['CAD_DESTINO'];		            
-		            };
-		            if ($ultimoRecorridoEncontrado > 0) {
-    		            echo '<BR>';
-	    	        } else {
-		              echo   '<h4>No se encontraron recorridos.</h4>';
-		            };
-		        } catch (PDOException $e) {  
-                    echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
-                };    			    
+			        $cantidadRecorridos = mostrarRecorridos($conexion, $ciudadOrigen, $ciudadDestino, $_SESSION['idusuario'], 0, $paisOrigen);                
             }; /* if (($paisOrigen >= 1) && ($paisDestino >= 1) && ($regionOrigen >= 1) && ($regionDestino >= 1) && ($ciudadOrigen >= 1) && ($ciudadDestino >= 1)) { */
                    
             /* Botones Siguiente y Anterior */
@@ -295,7 +251,7 @@ menu();
                 ($regionOrigen >= 1) && ($regionDestino >= 1) &&
                 ($ciudadOrigen >= 1) && ($ciudadDestino >= 1)) {        
 	            /* Solo podemos finalizar si encontramos al menos un recorrido valido. */
-	            if ($ultimoRecorridoEncontrado > 0) {
+	            if ($cantidadRecorridos > 0) {
 	                echo          '<input class="searchbutton" type="submit" name="botonContinuar" value="Finalizar">';
 	            };
 	        } else {
