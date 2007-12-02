@@ -33,8 +33,8 @@
 #include "genxml.h"
 
 #define VERSIONSTRING "Version 1.01, June 2004"
-#define BUFSIZE  2048
-#define BIGBUFSIZE  32000
+#define BUFSIZE  4096 //2048
+#define BIGBUFSIZE  128000 //32000
 
 typedef struct aggrxml_t {
   mi_string name[30], buffer[1];
@@ -319,13 +319,13 @@ mi_lvarchar *addxmlhdr(mi_lvarchar *name, mi_lvarchar *stmt, MI_FPARAM *fp)
     retlen = strlen(retval);
     if (BIGBUFSIZE <= (retlen + strlen(pdatum)) )
       mi_db_error_raise(NULL, MI_EXCEPTION,
-      "XML document exceeds the 30KB limit", NULL); 
+      "XML document exceeds the 128KB limit", NULL); 
     strcat(retval, pdatum);
   }
   retlen = strlen(retval);
   if (BIGBUFSIZE <= (retlen + 3 + strlen(pname)) )
     mi_db_error_raise(NULL, MI_EXCEPTION,
-      "XML document exceeds the 30KB limit", NULL); 
+      "XML document exceeds the 128KB limit", NULL); 
   sprintf(&retval[retlen], "</%s>\n", pname);
   retlvar = mi_string_to_lvarchar(retval); 
   mi_free(retval);
@@ -348,8 +348,16 @@ mi_lvarchar *genxmlsql(mi_integer header, mi_lvarchar *name,
   conn = mi_open(NULL, NULL, NULL);
   retval = (char *)mi_alloc(BIGBUFSIZE);
   pname = mi_lvarchar_to_string(name);
-  pdtdfile = mi_lvarchar_to_string(dtdfile);
-  pxslfile = mi_lvarchar_to_string(xslfile);
+  if (dtdfile == NULL) {
+    pdtdfile = NULL;
+  } else {    
+    pdtdfile = mi_lvarchar_to_string(dtdfile);
+  };
+  if (xslfile == NULL) {
+    pxslfile = NULL;
+  } else {    
+    pxslfile = mi_lvarchar_to_string(xslfile);
+  };
   if (header != 0)
     genhdr(conn, pname, pdtdfile, pxslfile, retval);
   else

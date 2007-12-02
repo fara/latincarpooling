@@ -30,29 +30,85 @@ WITH(NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(genxmlversion)"
 LANGUAGE C;
 
+{ Devuelve un tag XML con el nombre dado para cada una de las filas
+  enviada como parametro.
+  Argumentos:
+  - Nombre de cada tag XML.
+  - Row o lista de columnas.
+
+  Ejemplo:
+  select genxml('unCombustible', row(cle_id, cle_nombre))
+  from combustible;
+}
 CREATE FUNCTION genxml(LVARCHAR, ROW)
 RETURNING lvarchar
 WITH(NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(genxml)"
 LANGUAGE C;
 
+{ Devuelve un tag XML con el nombre "Row" para cada una de las filas
+  enviada como parametro.
+  Argumentos
+  - Row o lista de columnas.
+
+  Ejemplo:
+  select genxml(row(cle_id, cle_nombre))
+  from combustible;
+}
 CREATE FUNCTION genxml(ROW)
 RETURNING lvarchar
 WITH(NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(genxmlnamedrow)"
 LANGUAGE C;
 
+{ Devuelve un tag XML con el nombre indicado para cada una de las filas
+  enviada como parametro.
+  Argumentos
+  - nombre del tag XML.
+  - Row o lista de columnas.
+
+  Ejemplo:
+  select genxml('combustible','select * from combustible')
+  from systables
+  where tabid = 1;
+}
 CREATE FUNCTION genxml(LVARCHAR, LVARCHAR)
 RETURNING lvarchar
 WITH(NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(genxmlnhdr)"
 LANGUAGE C;
 
+{ Devuelve un documento XML con una seccion principal con el nombre recibido
+  a partir de una sentencia SQL.
+
+  Argumentos:
+  - nombre del tag XML principal.
+  - Sentencia SQL cuyo resultado se convertira a XML.
+
+  Ejemplo:
+        select genxmlhdr('combustible','select * from combustible')
+        from systables
+        where tabid = 1;
+}
 CREATE FUNCTION genxmlhdr(LVARCHAR, LVARCHAR)
 RETURNING lvarchar
 WITH(NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(genxmlhdr)"
 LANGUAGE C;
+
+{ Devuelve un documento XML con una seccion principal con el nombre recibido
+  a partir de una sentencia SQL.
+
+  Argumentos:
+  - ID en la tabla de DTDs y XSLs.
+  - Sentencia SQL cuyo resultado se convertira a XML. Solo convierte la
+  - primera columna.
+
+  Ejemplo:
+        select addxmlhdr('customer_set','select cle_id from combustible')
+        from systables
+        where tabid = 1;
+}
 
 CREATE FUNCTION addxmlhdr(LVARCHAR, LVARCHAR)
 RETURNING lvarchar
@@ -89,6 +145,16 @@ WITH (NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(init_aggrxml)"
 LANGUAGE C;
 
+{ Funcion agregada qeu genera un documento XML.
+  Parametros:
+  - Lista de columnas (row)
+  - ID en la tabla de DTDs y XSLs
+
+  Ejemplo:
+	SELECT aggrxml(recorrido, "customer_set")
+	FROM recorrido
+	WHERE rdo_id = 1;
+}
 CREATE FUNCTION final_aggrxml(aggrxml_t)
 RETURNING genxml_t
 WITH (NOT VARIANT)
@@ -102,6 +168,7 @@ CREATE AGGREGATE aggrxml WITH (
   FINAL = final_aggrxml
 );
 
+{ Tabla que guarda los Paths de los dtd y xsl.}
 CREATE TABLE genxmlinfo (
   name       varchar(30) PRIMARY KEY,
   dtypepath  lvarchar,
@@ -115,11 +182,13 @@ VALUES ("customer_set",
 INSERT INTO genxmlinfo
 VALUES ("manufact_set", "../manufact_set", "../manufact_set");
 
+
 CREATE FUNCTION genxsl(LVARCHAR, LVARCHAR, ROW)
 RETURNING lvarchar(32000)
 WITH(NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(genxsl)"
 LANGUAGE C;
+
 
 CREATE FUNCTION gendtd(LVARCHAR, LVARCHAR, ROW)
 RETURNING lvarchar(32000)
@@ -127,6 +196,20 @@ WITH(NOT VARIANT)
 EXTERNAL NAME "$INFORMIXDIR/extend/genxml/bin/genxml.bld(gendtd)"
 LANGUAGE C;
 
+{ Devuelve un documento XML.
+        Argumentos
+  - Nombre de la seccion principal.
+  - Sentencia SQL cuyo resultado se convertira a XML.
+  - Path completo del archivo con la DTD.
+  - Path completo del archivo con la XSL.
+
+  Ejemplo:
+  EXECUTE FUNCTION
+  genxmlhdr2("valoresdolares",
+        "SELECT * FROM valorcambio where vco_mda_id = 1",
+        "E:\usr\undtd.dtd",
+        "D:\usr\otroxsl.xsl");
+}
 CREATE FUNCTION genxmlhdr2(LVARCHAR, LVARCHAR, LVARCHAR, LVARCHAR)
 RETURNING lvarchar
 WITH(NOT VARIANT)
