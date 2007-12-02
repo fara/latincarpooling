@@ -61,3 +61,10 @@ SELECT aggrxml(recorrido, "customer_set")
 FROM recorrido
 WHERE rdo_id = 1;
 
+EXECUTE FUNCTION
+  genxmlhdr2("valoresdolares",
+        "SELECT * FROM valorcambio where vco_mda_id = 1",
+        "E:\tito\undtd.dtd",
+        "D:\Gente\bien\gente\mal\otroxsl.xsl");
+
+
