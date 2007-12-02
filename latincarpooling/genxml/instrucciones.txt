@@ -1,0 +1,5 @@
+1. Descomprimir todo en el directorio InfomixDir$\extend\genxml
+2. Borrar el subdirectorio bin.
+3. Ejecutar nmake -f winnt.mak
+4. Correr genxml.sql
+5. Testearlo.
