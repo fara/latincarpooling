@@ -11,8 +11,8 @@
 //		$query = "select uio_id, uio_nombreusuario from usuario where uio_nombreusuario = '". valor_campo('usuario') . 
 //				"' AND uio_contrasena = '" . valor_campo('password') . "';";
 //	    $query = "SELECT  VERIFICAR_UIO2('".valor_campo('usuario')."','".valor_campo('password')."'), count(*)  FROM USUARIO";				    
-	    $query = "SELECT  VERIFICAR_UIO('".valor_campo('usuario')."','".valor_campo('password')."') FROM ifxsystables where tabid = 1";				    
-        
+	    $query = "SELECT  VERIFICAR_UIO('".valor_campo('usuario')."','".valor_campo('password')."') FROM ifxsystables where tabid = 1";				            
+                
 		$row = fetchOne($conexion, $query);
 			
 		if ($row != '' && $row[1] > 0){		

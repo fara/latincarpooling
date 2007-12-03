@@ -10,6 +10,7 @@ function carpooling_header($title){
         <meta name="keywords" content="your,keywords,goes,here" />
         <meta name="author" content="Grupo 3 de SABD / Original design by Andreas Viklund - http://andreasviklund.com" />
         <link rel="stylesheet" href="andreas09.css" type="text/css" media="screen" />
+        <script language="JavaScript" type="text/javascript" src="js/ajax.js"></script>						
     </head>
     <body>
         <div id="container">

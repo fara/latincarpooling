@@ -1,6 +1,6 @@
 <?Php
 
-/* set_time_limit(6000); AR Para que no genere un timeout al conextarse en el laboratorio. */
+ set_time_limit(6000); /*AR Para que no genere un timeout al conextarse en el laboratorio. */
 
 /* AR 2007-11-24 Abre una conexion con el servidor DB2 */
 Function nuevaConexion(){	
@@ -494,7 +494,7 @@ function recorridoMasBarato($conexion, $ciudadOrigen, $ciudadDestino, $fecha, $c
                             where r.rdo_cad_id_origen = ".$ciudadOrigen."
                             and r.rdo_cad_id_destino = ".$ciudadDestino."
                                 group by rdo_id
-                            order by (sum(t.tra_distancia) * ".$costoKmCombustible." + sum(c.cft_costofijo)) ASC
+                            order by (sum(coalesce(t.tra_distancia,0)) * ".$costoKmCombustible." + sum(coalesce(c.cft_costofijo,0))) ASC
                             Fetch first 1 rows only
                             ");
                    $fila = $resultado->fetch(PDO::FETCH_ASSOC);
