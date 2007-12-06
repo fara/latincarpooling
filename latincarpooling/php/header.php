@@ -12,7 +12,7 @@ function carpooling_header($title){
         <link rel="stylesheet" href="andreas09.css" type="text/css" media="screen" />
         <script language="JavaScript" type="text/javascript" src="js/ajax.js"></script>						
     </head>
-    <body>
+    <body onload="inicializarPagina()">
         <div id="container">
             <div id="sitename">
                 <h1>CARPOOLING</h1>
