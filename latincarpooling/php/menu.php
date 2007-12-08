@@ -17,7 +17,7 @@ echo '
 <div id="leftside">
 <a class="nav" href="buscarviaje.php">Viajes</a><span class="hide"> | </span>
 <a class="nav sub" href="buscarviaje.php">Buscar</a><span class="hide"> | </span>
-<a class="nav sub" href="ingresarviaje.php">Nuevo</a><span class="hide"> | </span>
+<a class="nav sub" href="ingresarviajeajax.php">Nuevo</a><span class="hide"> | </span>
 <a class="nav sub" href="listarviajeconductor.php">Mis Viajes</a><span class="hide"> | </span>
 <a class="nav" href="listarviajepasajero.php">Pedidos</a><span class="hide"> | </span>
 <a class="nav sub" href="ingresarPedido.php">Nuevo</a><span class="hide"> | </span>

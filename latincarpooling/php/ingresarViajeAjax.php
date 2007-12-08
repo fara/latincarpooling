@@ -12,50 +12,6 @@ menu();
 <h1>Nuevo Viaje</h1>
 <?php
         $camposOk = 0;									                    
-        /* Si se enviaron parametros.*/
-		if (hay_campos_enviados()) {										        										        
-		    if (!verificar_campo('paisOrigen') ) {												    
-			        error("Por favor, complete el pais de origen");																			
-                    } elseif (!verificar_campo('regionOrigen') ) {
-                        error("Por favor, complete la region de origen");																			
-                    } elseif (!verificar_campo('ciudadOrigen') ) {
-                        error("Por favor, complete la ciudad de origen");																			
-                    } elseif (!verificar_campo('paisDestino') ) {
-                        error("Por favor, complete el pais de destino");																			
-                    } elseif (!verificar_campo('regionDestino') ) {
-                        error("Por favor, complete la region de destino");																			
-                    } elseif (!verificar_campo('ciudadDestino') ) {
-                        error("Por favor, complete la ciudad de destino");																			
-                    } elseif (!verificar_campo('fechaDesde') ) {
-                        error("Por favor, complete la minima fecha en la cual desea viajar");																			
-                    } elseif (!es_string_fecha_valida(valor_campo('fechaDesde')) ) {
-                        error("La fecha inicial ingresada es incorrecta. Por favor, utilice el formato dd/mm/aaaa.");																			                                                
-                    } elseif (!verificar_campo('fechaHasta') ) {
-                        error("Por favor, complete la maxima fecha en la cual desea viajar");																			
-                    } elseif (!es_string_fecha_valida(valor_campo('fechaHasta')) ) {
-                        error("La fecha final ingresada es incorrecta. Por favor, utilice el formato dd/mm/aaaa.");																			                        
-                    } elseif (verificar_campo('importe') && !es_numero_decimal($_REQUEST['importe']) ) {
-                        error("El importe debe ser un número. Recuerde utilizar el punto como separador de decimales.");																			                        
-                    } elseif (verificar_campo('importe') && (valor_campo('importe') < 0) ) {
-                        error("El importe no puede ser negativo. Recuerde utilizar el punto como separador de decimales.");																			                        
-                    } elseif (!verificar_campo('tipoImporte') ) {
-                        error("Por favor, seleccione un tipo de importe.");																			
-                    } elseif (!verificar_campo('cantidadLugares') ) {
-                        error("Por favor, ingrese la cantidad de lugares.");																			
-                    } elseif (verificar_campo('cantidadLugares') && !es_numero_entero($_REQUEST['cantidadesLugares']) ) {
-                        error("La cantidad de lugares debe ser un número.");																			                        
-                    } elseif (verificar_campo('cantidadLugares') && (valor_campo('cantidadLugares') < 0) ) {
-                        error("La cantidad de lugares no puede ser negativa.");																	
-                    } elseif (!verificar_campo('vehiculo') ) {
-                        error("Por favor, seleccione un vehiculo.");																					                        
-                    } elseif (!verificar_campo('recorridoSeleccionado') ) {
-                        error("Por favor, seleccione un recorrido.");																			
-                    } else {                        
-                        $camposOk = 1;	                        
-                    };
-        };
-        
-        $conexion = nuevaConexion();
         
         $paisOrigen = valor_campo('paisOrigen');
         $regionOrigen = valor_campo('regionOrigen');
@@ -63,30 +19,59 @@ menu();
         $paisDestino = valor_campo('paisDestino');
         $regionDestino = valor_campo('regionDestino');
         $ciudadDestino = valor_campo('ciudadDestino');
-        $fechaDesde = valor_campo('fechaDesde');
-        if ($fechaDesde == '') {
-            $fechaDesde = date('d/m/Y');
-        };
-        $fechaHasta = valor_campo('fechaHasta');
-        if ($fechaHasta == '') {
-            $fechaHasta = date('d/m/Y');
-        };
-        $importe = valor_campo('importe');
-        if ($importe == '') {
-            $importe = 0;
-        };
-        $tipoImporte = valor_campo('tipoImporte');
-        if ($tipoImporte == '') {
-            $tipoImporte = 'P';
-        };
-        $cantidadLugares = valor_campo('cantidadLugares');
-        if ($cantidadLugares == '') {
-            $cantidadLugares = 1;
-        };
+        $fechaDesde = valor_campo('fechaDesde');        
+        $fechaHasta = valor_campo('fechaHasta');        
+        $importe = valor_campo('importe');        
+        $tipoImporte = valor_campo('tipoImporte');        
+        $cantidadLugares = valor_campo('cantidadLugares');        
         $recorridoSeleccionado = valor_campo('recorridoSeleccionado');
         $vehiculo = valor_campo('vehiculo');
-        $usuario = $_SESSION['idusuario'];
-                        
+        
+        /* Si se enviaron parametros.*/
+		if (hay_campos_enviados()) {										        										        
+		    if ($paisOrigen == '' || $paisOrigen <= 0) {												    
+			   error("Por favor, complete el pais de origen");																			
+            } elseif ($regionOrigen == '' || $regionOrigen <= 0) {			
+                        error("Por favor, complete la region de origen");																			
+            } elseif ($ciudadOrigen == '' || $ciudadOrigen <= 0) {			
+                        error("Por favor, complete la ciudad de origen");																			
+            } elseif ($paisDestino == '' || $paisDestino <= 0) {			
+                error("Por favor, complete el pais de destino");																			
+            } elseif ($regionDestino == '' || $regionDestino <= 0) {			
+                        error("Por favor, complete la region de destino");																			
+            } elseif ($ciudadDestino == '' || $ciudadDestino <= 0) {			
+                        error("Por favor, complete la ciudad de destino");																			
+            } elseif (!verificar_campo('fechaDesde') ) {
+                        error("Por favor, complete la minima fecha en la cual desea viajar");																			
+            } elseif (!es_string_fecha_valida(valor_campo('fechaDesde')) ) {
+                        error("La fecha inicial ingresada es incorrecta. Por favor, utilice el formato dd/mm/aaaa.");																			                                                
+            } elseif (!verificar_campo('fechaHasta') ) {
+                        error("Por favor, complete la maxima fecha en la cual desea viajar");																			
+            } elseif (!es_string_fecha_valida(valor_campo('fechaHasta')) ) {
+                        error("La fecha final ingresada es incorrecta. Por favor, utilice el formato dd/mm/aaaa.");																			                        
+            } elseif (verificar_campo('importe') && !es_numero_decimal($_REQUEST['importe']) ) {
+                        error("El importe debe ser un número. Recuerde utilizar el punto como separador de decimales.");																			                        
+            } elseif (verificar_campo('importe') && (valor_campo('importe') < 0) ) {
+                        error("El importe no puede ser negativo. Recuerde utilizar el punto como separador de decimales.");																			                        
+            } elseif (!verificar_campo('tipoImporte') ) {
+                        error("Por favor, seleccione un tipo de importe.");																			
+            } elseif (!verificar_campo('cantidadLugares') ) {
+                        error("Por favor, ingrese la cantidad de lugares.");																			
+            } elseif (verificar_campo('cantidadLugares') && !es_numero_entero($_REQUEST['cantidadesLugares']) ) {
+                        error("La cantidad de lugares debe ser un número.");																			                        
+            } elseif (verificar_campo('cantidadLugares') && (valor_campo('cantidadLugares') < 0) ) {
+                        error("La cantidad de lugares no puede ser negativa.");																	            
+            } elseif ($vehiculo == '' || $vehiculo <= 0) {			
+                        error("Por favor, seleccione un vehiculo.");																					                        
+            } elseif (!verificar_campo('recorridoSeleccionado') ) {
+                   error("Por favor, seleccione un recorrido.");																			
+            } else {                        
+                        $camposOk = 1;	                        
+            };
+        };
+        
+        $conexion = nuevaConexion();
+                                               
         /* Si tenemos todos los datos, guardamos el nuevo pedido de viaje.*/
         if ($camposOk != 0) {
             try {
@@ -149,31 +134,40 @@ menu();
             };
             
         } else {                
+            if ($fechaDesde == '') {
+                $fechaDesde = date('d/m/Y');
+            };        
+            if ($fechaHasta == '') {
+                $fechaHasta = date('d/m/Y');
+            };        
+            if ($importe == '') {
+                $importe = 0;
+            };        
+            if ($tipoImporte == '') {
+                $tipoImporte = 'P';
+            };
+            $cantidadLugares = valor_campo('cantidadLugares');                
+            $usuario = $_SESSION['idusuario'];
+            
             /* Comienzo del formulario.*/
             echo '
-        <form name="formingresarviaje" method="get" action="">            
-        <table cellpadding="1" cellspacing="1" width="500" bordercolor="#999999" align="center" valign="top">
+        <form name="formingresarviaje" method="get" action="">  
+                ';             
+        campoHidden('idUsuarioActual', $usuario);		        
+            echo '
+            <table cellpadding="1" cellspacing="1" width="500" bordercolor="#999999" align="center" valign="top">
             <tr>
 			    <td width="25%"> 
                     <div align="right"><span class="intro">Origen: </span></div>
                  </td>
 			     <td width="75%">					  			     
-			    ';               
-			    
-			echo '<select name="paisOrigen" class="searchbox" id="paisOrigen" onchange="mostrarRegionesOrigen()" >';			
-            echo '<select name="regionOrigen" class="searchbox" id="regionOrigen">';            
-            echo '<input type="text" id="ciudadOrigenDescripcion" name="ciudadOrigenDescripcion" value="" '.
-		        'onkeyup="mostrarCiudadesOrigen();" autocomplete="off" />
-                <div id="divCiudadOrigen">
-	            </div>	            
-	            ';
-            if ($ciudadOrigen > 1) {
-                campoHidden('ciudadOrigen', $ciudadOrigen);		        
-            } else {
-                campoHidden('ciudadOrigen', '0');
-            };
-                        		                                
-            echo '
+			        <select name="paisOrigen" class="searchbox" id="paisOrigen" onchange="mostrarRegiones(\'paisOrigen\',\'regionOrigen\', \'ciudadOrigen\', \'ciudadOrigenDescripcion\')" >
+                    <select name="regionOrigen" class="searchbox" id="regionOrigen" onchange="cambioRegion(\'ciudadOrigen\', \'ciudadOrigenDescripcion\', \'divCiudadOrigen\')">
+                    <input type="text" id="ciudadOrigenDescripcion" name="ciudadOrigenDescripcion" value="" '.
+		                'onkeyup="mostrarCiudades(\'regionOrigen\', \'ciudadOrigenDescripcion\', \'divCiudadOrigen\',\'setCiudadOrigen\');" autocomplete="off" />
+                    <div id="divCiudadOrigen">
+	                </div>	            
+	                <input type="hidden" id="ciudadOrigen" name="ciudadOrigen" value="'.$ciudadOrigen.'"/>	            
                 </td>
             </tr>
             <tr>
@@ -181,32 +175,15 @@ menu();
                     <div align="right"><span class="intro">Destino: </span></div>
                  </td>
 			     <td>					  			     
-			    ';               
-			    
-			    echo '<select name="'.paisDestino.'" class="searchbox" id="'.$paisDestino.'">';
-            if ($paisDestino >= 1) {                        
-                echo '<option value="'.$paisDestino.'" selected="selected">'.$descripcionPais($conexion, $paisDestino).'</option>';            
-            };
-            echo '</select>';
-            
-            echo '<select name="'.regionDestino.'" class="searchbox" id="'.$regionDestino.'">';
-            if ($regionDestino >= 1) {                        
-                echo '<option value="'.$regionDestino.'" selected="selected">'.$descripcionRegion($conexion, $regionDestino).'</option>';            
-            };
-            echo '</select>';
-            
-            echo '<input type="text" id="ciudadDestinoDescripcion" name="ciudadDestinoDescripcion" value="">
-		        onkeyup="buscarCiudad(\'ciudadDestinoDescripcion\',\'ciudadDestino\',\'divCiudadDestino\');" autocomplete="off" />
-                <div id="divCiudadDestino">
-	            </div>
+			        <select name="paisDestino" class="searchbox" id="paisDestino" onchange="mostrarRegiones(\'paisDestino\',\'regionDestino\', \'ciudadDestino\', \'ciudadDestinoDescripcion\')" >
+                    <select name="regionDestino" class="searchbox" id="regionDestino" onchange="cambioRegion(\'ciudadDestino\', \'ciudadDestinoDescripcion\', \'divCiudadDestino\')">
+                    <input type="text" id="ciudadDestinoDescripcion" name="ciudadDestinoDescripcion" value="" '.
+		                'onkeyup="mostrarCiudades(\'regionDestino\', \'ciudadDestinoDescripcion\', \'divCiudadDestino\',\'setCiudadDestino\');" autocomplete="off" />
+                    <div id="divCiudadDestino">
+	                </div>	                        
+	                <input type="hidden" id="ciudadDestino" name="ciudadDestino" value="'.$ciudadDestino.'"/>
 	            ';
-            if ($ciudadDestino > 1) {
-                campoHidden('ciudadDestino', $ciudadDestino);		        
-            } else {
-                campoHidden('ciudadDestino', '0');
-            };
-			    
-                            
+	            	            	                                                      
            if ($tipoImporte == 'P') {
                 $pasajeroSelected = ' selected="selected"';
                 $totalSelected = '';
@@ -252,16 +229,9 @@ menu();
                     <div align="right"><span class="intro">Vehiculo:</span></div>
                  </td>
 		        <td>					  			     
-		        ';
-		        listaVehiculos($conexion, 'vehiculo', $usuario, $vehiculo);		            		            		        
-		        echo '			        
+		            <select name="vehiculo" class="searchbox" id="vehiculo" onchange="mostrarRecorridos();">		        
                 </td>
-            </tr>
-                ';                
-                 
-                 campoHidden('validarRecorrido', 'validarRecorrido');
-                 
-                 echo '
+            </tr>                
             <tr>
 			    <td> 
                     <div align="left"><span class="intro">Recorridos:</span></div>
@@ -269,12 +239,7 @@ menu();
             </tr>
             <tr>              
                 <td colspan ="2"> 
-			        <p>';               			    		        
-            
-                   
-            /* Botones Siguiente y Anterior */
-            echo '
-                    </p>
+			        <div id="divRecorridos"> </div>            
                 </td>
             </tr>
             <tr>
@@ -284,9 +249,7 @@ menu();
             </tr>
             <tr>    
 			    <td colspan="2" align="center">
-			    ';	        
-	            echo          '<input class="searchbutton" type="submit" name="botonContinuar" value="Continuar">';	        		  
-	        echo  '
+			        <input class="searchbutton" type="submit" name="botonContinuar" value="Continuar">
                 </td>
             </tr>
             </table>

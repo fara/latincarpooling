@@ -12,7 +12,7 @@ $idSesion = rand(1,5000);
 //ciudadOrigen=3435548&ciudadDestino=3841490&idUsuario=13&idVehiculo=1&paisOrigen=1
         
 if (($ciudadOrigen > 0) && ($ciudadDestino > 0) && ($idUsuario > 0) &&
-    ($idVehiculo > 0) && ($paisOrigen > 0)) {
+    ($idVehiculo >= 0) && ($paisOrigen > 0)) {
     try {
         $conexionInformix = nuevaConexionInformix();		                   
         	            	
@@ -50,6 +50,15 @@ if (($ciudadOrigen > 0) && ($ciudadDestino > 0) && ($idUsuario > 0) &&
     } catch (PDOException $e) {  
         echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                       
     }; 
+} else {
+    echo 'Faltan datos areco';
+    echo $ciudadOrigen;
+    echo $ciudadDestino;
+    echo $idUsuario;
+    echo $idVehiculo;
+    echo $paisOrigen;
+    echo $fechaHoy;
+    echo $idSesion;
 };
 ?>
 	
