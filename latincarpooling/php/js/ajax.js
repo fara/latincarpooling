@@ -312,7 +312,7 @@ function mostrarRecorridos() {
     };
                
 	if ((xmlrequest.readyState == 4 || xmlrequest.readyState == 0)
-	&& (idUsuario > 0)) {
+	&& (idUsuario > 0) && (divRecorridos != null)) {
 	    //Validamos que tengamos los datos que necesitamos.
 	    if (idPaisOrigen <= 0 || idPaisOrigen == '') {
 	        divRecorridos.innerHTML = '<h4>Por favor, elija el pais de origen.</h4>';
