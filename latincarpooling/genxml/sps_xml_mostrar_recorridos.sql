@@ -37,7 +37,7 @@ create procedure sps_xml_mostrar_recorridos(
        RAISE EXCEPTION -746, 0, 'No existe el usuario. [1]';
     end if;
 
-    if idvehiculo is not null
+    if idvehiculo > 0
     and not exists (select 1
                    from vehiculo
                     where vlo_uio_id = idusuario
@@ -135,9 +135,9 @@ create procedure sps_xml_mostrar_recorridos(
     set costototal = distancia * costoKmCombustible + costofijo;
 
     select min(distancia),
-	min(costototal)
+        min(costototal)
     into menordistancia,
-	menorcostototal
+        menorcostototal
     from recorridosencontrados;
 
     update recorridosencontrados
@@ -150,9 +150,9 @@ create procedure sps_xml_mostrar_recorridos(
 
     -- Generamos el documento XML con los datos de la tabla temporal.
     select genxmlhdr2("recorridosencontrados",
-	        "select idrecorrido, descripcion, distancia, costofijo, costototal, mascorto, masbarato	FROM recorridosencontrados",
-	        "\usr\home\sa505103\recorridos.dtd",
-	        "\usr\home\sa505103\recorridos.xsl")
+                "select idrecorrido, descripcion, distancia, costofijo, costototal, mascorto, masbarato FROM recorridosencontrados",
+                "\usr\home\sa505103\recorridos.dtd",
+                "\usr\home\sa505103\recorridos.xsl")
     into result
     from systables
     where tabid = 1;
@@ -182,32 +182,32 @@ execute procedure sps_xml_mostrar_recorridos(
 <!DOCTYPE recorridosencontrados SYSTEM "\usr\home\sa505103\recorridos.dtd">
 <?xml-stylesheet type="text/xsl" href="\usr\home\sa505103\recorridos.xsl" ?>
 <recorridosencontrados>
-	<row>
-		<idrecorrido>225</idrecorrido>
-		<descripcion>Centro - Tortuguitas - Pilar - Solis - San Antonio de Areco - Duggan - Capitan Sarmiento - Arrecifes - Pergamino</descripcion>
-		<distancia>215</distancia>
-		<costofijo>9.5500000000</costofijo>
-		<costototal>163.4900000000</costototal>
-		<mascorto>N</mascorto>
-		<masbarato>N</masbarato>
-	</row>
-	<row>
-		<idrecorrido>226</idrecorrido>
-		<descripcion>Centro - Canuelas - Lujan - San Andres de Giles - Carmen de Areco - Chacabuco - Junin - Rojas - Pergamino</descripcion>
-		<distancia>396</distancia>
-		<costofijo>3.4000000000</costofijo>
-		<costototal>286.9400000000</costototal>
-		<mascorto>N</mascorto>
-		<masbarato>N</masbarato>
-	</row>
-	<row>
-		<idrecorrido>227</idrecorrido>
-		<descripcion>Centro - Pilar - Solis - San Antonio de Areco - Duggan - Capitan Sarmiento - Arrecifes - Pergamino</descripcion>
-		<distancia>202</distancia>
-		<costofijo>11.3000000000</costofijo>
-		<costototal>155.9300000000</costototal>
-		<mascorto>S</mascorto>
-		<masbarato>S</masbarato>
-	</row>
+        <row>
+                <idrecorrido>225</idrecorrido>
+                <descripcion>Centro - Tortuguitas - Pilar - Solis - San Antonio de Areco - Duggan - Capitan Sarmiento - Arrecifes - Pergamino</descripcion>
+                <distancia>215</distancia>
+                <costofijo>9.5500000000</costofijo>
+                <costototal>163.4900000000</costototal>
+                <mascorto>N</mascorto>
+                <masbarato>N</masbarato>
+        </row>
+        <row>
+                <idrecorrido>226</idrecorrido>
+                <descripcion>Centro - Canuelas - Lujan - San Andres de Giles - Carmen de Areco - Chacabuco - Junin - Rojas - Pergamino</descripcion>
+                <distancia>396</distancia>
+                <costofijo>3.4000000000</costofijo>
+                <costototal>286.9400000000</costototal>
+                <mascorto>N</mascorto>
+                <masbarato>N</masbarato>
+        </row>
+        <row>
+                <idrecorrido>227</idrecorrido>
+                <descripcion>Centro - Pilar - Solis - San Antonio de Areco - Duggan - Capitan Sarmiento - Arrecifes - Pergamino</descripcion>
+                <distancia>202</distancia>
+                <costofijo>11.3000000000</costofijo>
+                <costototal>155.9300000000</costototal>
+                <mascorto>S</mascorto>
+                <masbarato>S</masbarato>
+        </row>
 </recorridosencontrados>
 }
