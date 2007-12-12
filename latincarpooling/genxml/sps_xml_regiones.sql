@@ -14,14 +14,15 @@ LET result = result || "<regiones>";
 --Fin encabezado
 
 
-    FOREACH SELECT genxml('region', row(ron_id, ron_nombre))
+FOREACH SELECT genxml('region', row(ron_id, ron_nombre))
         INTO ressql
         FROM region
 	where ron_pis_id = idpais
   
         LET result = result || ressql;
-
 END FOREACH;
+
+--Cierro el xml
 LET result = result || "</regiones>";
 
 RETURN result;
