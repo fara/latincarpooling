@@ -1,5 +1,7 @@
 CREATE PROCEDURE sps_xml_paises ()
 RETURNING LVARCHAR
+
+
 DEFINE result LVARCHAR;
 DEFINE ressql LVARCHAR;
 
