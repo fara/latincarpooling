@@ -40,6 +40,107 @@ function parameterValue( name )
     return results[1];
 }
 
+// Declaring valid date character, minimum year and maximum year
+var dtCh= "/";
+var minYear=1900;
+var maxYear=2100;
+
+function isInteger(s){
+	var i;
+    for (i = 0; i < s.length; i++){   
+        // Check that current character is number.
+        var c = s.charAt(i);
+        if (((c < "0") || (c > "9"))) return false;
+    }
+    // All characters are numbers.
+    return true;
+}
+
+function stripCharsInBag(s, bag){
+	var i;
+    var returnString = "";
+    // Search through string's characters one by one.
+    // If character is not in bag, append to returnString.
+    for (i = 0; i < s.length; i++){   
+        var c = s.charAt(i);
+        if (bag.indexOf(c) == -1) returnString += c;
+    }
+    return returnString;
+}
+
+function daysInFebruary (year){
+	// February has 29 days in any year evenly divisible by four,
+    // EXCEPT for centurial years which are not also divisible by 400.
+    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
+}
+
+function DaysArray(n) {
+	for (var i = 1; i <= n; i++) {
+		this[i] = 31
+		if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
+		if (i==2) {this[i] = 29}
+   } 
+   return this
+}
+
+function isDate(dtStr){
+	var daysInMonth = DaysArray(12)
+	var pos1=dtStr.indexOf(dtCh)
+	var pos2=dtStr.indexOf(dtCh,pos1+1)
+	var strDay=dtStr.substring(0,pos1)
+	var strMonth=dtStr.substring(pos1+1,pos2)
+	var strYear=dtStr.substring(pos2+1)
+	strYr=strYear
+	if (strDay.charAt(0)=="0" && strDay.length>1) strDay=strDay.substring(1)
+	if (strMonth.charAt(0)=="0" && strMonth.length>1) strMonth=strMonth.substring(1)
+	for (var i = 1; i <= 3; i++) {
+		if (strYr.charAt(0)=="0" && strYr.length>1) strYr=strYr.substring(1)
+	}
+	month=parseInt(strMonth)
+	day=parseInt(strDay)
+	year=parseInt(strYr)
+	if (pos1==-1 || pos2==-1){
+		//alert("The date format should be : dd/mm/yyyy")
+		return false
+	}
+	if (strMonth.length<1 || month<1 || month>12){
+		//alert("Please enter a valid month")
+		return false
+	}
+	if (strDay.length<1 || day<1 || day>31 || (month==2 && day>daysInFebruary(year)) || day > daysInMonth[month]){
+		//alert("Please enter a valid day")
+		return false
+	}
+	if (strYear.length != 4 || year==0 || year<minYear || year>maxYear){
+		//alert("Please enter a valid 4 digit year between "+minYear+" and "+maxYear)
+		return false
+	}
+	if (dtStr.indexOf(dtCh,pos2+1)!=-1 || isInteger(stripCharsInBag(dtStr, dtCh))==false){
+		//alert("Please enter a valid date")
+		return false
+	}
+return true
+}
+
+//Convierte mm/dd/aaaa a dd/mm/aaaa.
+function fechaNormal(bd){        
+    var strDay=bd.substr(3,2);    
+	var strMonth=bd.substr(0,2);
+	var strYear=bd.substr(6,4);
+	var salida = strDay + dtCh + strMonth + dtCh + strYear;
+	return salida;
+};
+
+String.prototype.trim = function() {
+	return this.replace(/^\s+|\s+$/g,"");
+}
+String.prototype.ltrim = function() {
+	return this.replace(/^\s+/,"");
+}
+String.prototype.rtrim = function() {
+	return this.replace(/\s+$/,"");
+}
+
 //Called when the AJAX response is returned.
 function handleSearchSuggest() {
 	if (searchReq.readyState == 4) {
@@ -130,6 +231,7 @@ function handleMostrarPais(xmlrequest, nombreCampoPais, nombreCampoRegion,
 		  document.getElementById(nombreCampoCiudadDescripcion).value = '';
 		  document.getElementById(nombreCampoCiudad).value = 0;		  
 		  mostrarRecorridos();
+		  mostrarViajes();
 	    };
 	}
 }
@@ -176,6 +278,7 @@ function handleMostrarRegiones(xmlrequest, nombreCampoRegion,
 		document.getElementById(nombreCampoCiudad).value = 0;
 		document.getElementById(nombreCampoCiudadDescripcion).value = '';		
 		mostrarRecorridos();
+		mostrarViajes();
 	}
 }
 
@@ -234,6 +337,7 @@ function setCiudadOrigen(value) {
 	document.getElementById('ciudadOrigenDescripcion').value = ciudadDescripcion;
 	document.getElementById('divCiudadOrigen').innerHTML = '';	
 	mostrarRecorridos();
+	mostrarViajes();
 }
 
 function setCiudadDestino(value) {
@@ -243,6 +347,7 @@ function setCiudadDestino(value) {
 	document.getElementById('ciudadDestinoDescripcion').value = ciudadDescripcion;
 	document.getElementById('divCiudadDestino').innerHTML = '';	
 	mostrarRecorridos();
+	mostrarViajes();
 }
 
 
@@ -400,3 +505,117 @@ function handleMostrarRecorridos(xmlrequest) {
 	};
 }
 
+
+
+function mostrarViajes() {    
+    var divViajesEncontrados = document.getElementById('divViajesEncontrados');
+    
+    if (divViajesEncontrados != null) {   
+        var cantidadLugares = document.getElementById('cantidadLugares').value;
+        var idCiudadOrigen = document.getElementById('ciudadOrigen').value;
+        var idCiudadDestino = document.getElementById('ciudadDestino').value;       
+        var fechaDesde = document.getElementById('fechaDesde').value;
+        var fechaHasta = document.getElementById('fechaHasta').value;
+        var xmlrequest = getXmlHttpRequestObject();    
+                       
+	    //Validamos que tengamos los datos que necesitamos.	    
+	    if (idCiudadOrigen <= 0 || idCiudadOrigen == '') {
+	        divViajesEncontrados.innerHTML = '<h4>Por favor, elija la ciudad de origen.</h4>';
+	    } else if (idCiudadDestino <= 0 || idCiudadDestino == '') {
+	        divViajesEncontrados.innerHTML = '<h4>Por favor, elija la ciudad de destino.</h4>';
+        } else if (!isDate(fechaDesde)) {
+	        divViajesEncontrados.innerHTML = '<h4>Por favor, ingrese una fecha mínima válida. Recuerde que el formato es dd/mm/aaaa.</h4>';	        
+        } else if (!isDate(fechaHasta)) {
+	        divViajesEncontrados.innerHTML = '<h4>Por favor, ingrese una fecha máxima válida. Recuerde que el formato es dd/mm/aaaa.</h4>';	        	        
+	    } else {
+	        divViajesEncontrados.innerHTML = '<h4>Buscando viajes...</h4>';
+	        //Tenemos todo lo que necesitamos.     		        
+	        if (!(cantidadLugares >= 1)) {
+                cantidadLugares = 1;
+            };
+	        
+		    xmlrequest.open("GET", 'ajax_listarviajes.php?'
+		        + 'ciudadOrigen=' + idCiudadOrigen
+		        + '&ciudadDestino=' + idCiudadDestino
+		        + '&cantidadLugaresLibres=' + cantidadLugares
+		        + '&fechaDesde=' + fechaDesde
+		        + '&fechaHasta=' + fechaHasta, true);
+		    xmlrequest.onreadystatechange = function () {
+		       handleMostrarViajes(xmlrequest) };
+		    xmlrequest.send(null);
+	    };
+	};		
+}
+
+function handleMostrarViajes(xmlrequest) {
+	if (xmlrequest.readyState == 4) {
+	    				
+		var divViajesEncontrados = document.getElementById('divViajesEncontrados');
+		var doc =  parsearXML(xmlrequest.responseText);
+		
+		var viajes = doc.getElementsByTagName('viaje');
+		
+		if (viajes.length > 0) {
+		  var fechaDesde;
+		  var fechaHasta;
+		  var importePasajero;
+		  var importeViaje;
+		  var descripcionImporte;
+		  var cantidadLugares;
+		  var nombreConductor;
+		  var sexoConductor;
+		  var descripcionSexoConductor;
+		  var esFumador;		  	
+		  var descripcionEsFumador;
+		  var opciones = '<table cellpadding="1" cellspacing="1" width="100%">';
+		  opciones += '<tr Class="tituloColumna"><td width="15%">Fecha Inicial</td>';
+		  opciones += '<td width="15%">Fecha Final</td>';
+		  opciones += '<td width="20%">Importe</td>';
+		  opciones += '<td width="11%">Lugares Libres</td>';
+		  opciones += '<td width="21%">Conductor</td>';
+		  opciones += '<td width="12%">Sexo</td>';
+		  opciones += '<td width="12%">¿Es Fumador?</td></tr>';
+		  
+		  for(var i=0;i < viajes.length;i++) {  		    
+		    fechaDesde = viajes[i].getElementsByTagName('vje_fechamenor')[0].textContent;
+		    fechaHasta = viajes[i].getElementsByTagName('vje_fechamayor')[0].textContent;
+		    importePasajero = viajes[i].getElementsByTagName('vcr_importe')[0].textContent;
+		    importeViaje = viajes[i].getElementsByTagName('vcr_importeviaje')[0].textContent;		  
+		    cantidadLugares = viajes[i].getElementsByTagName('vcr_lugareslibres')[0].textContent;		  
+		    nombreConductor = viajes[i].getElementsByTagName('uio_nombreusuario')[0].textContent;		  
+		    sexoConductor = viajes[i].getElementsByTagName('uio_sexo')[0].textContent;		  
+		    esFumador = viajes[i].getElementsByTagName('uio_esfumador')[0].textContent;		  
+		  
+		    if (importePasajero > 0) {
+		        descripcionImporte = '$ ' + roundNumber(importePasajero,2) + '/pasajero';		        
+		    } else {
+		        descripcionImporte = '$ ' + roundNumber(importeViaje,2);
+		    };
+		    
+		    if (sexoConductor == 'M') {
+		        descripcionSexoConductor = 'Hombre';
+		    } else {
+		        descripcionSexoConductor = 'Mujer';
+		    };
+		    
+		    if (esFumador == '1' || esFumador == 't') {
+                descripcionEsFumador = 'Sí';
+            } else {
+                descripcionEsFumador = 'No';
+            };
+		    
+		    opciones = opciones + '<tr class="filaResultado><td>' + fechaNormal(fechaDesde) + '</td>';
+			opciones = opciones + '		<td>' + fechaNormal(fechaHasta) + '</td>';
+			opciones = opciones + '		<td>' + descripcionImporte + '</td>';
+			opciones = opciones + '		<td>' + cantidadLugares + '</td>';					
+			opciones = opciones + '		<td>' + nombreConductor.trim() + '</td>';
+			opciones = opciones + '		<td>' + descripcionSexoConductor + '</td>';		
+			opciones = opciones + '		<td>' + descripcionEsFumador + '</td></tr>';		    		    
+		  };
+		  opciones +=  '</table>';
+		  divViajesEncontrados.innerHTML = opciones;		  		  
+	    } else {
+	      divViajesEncontrados.innerHTML = '<h3><center>No se encontraron viajes con esas características.<BR>Por favor, cargue un pedido de viaje.</center></h3>';	        
+	    };	    	    	
+	};
+}

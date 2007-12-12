@@ -102,9 +102,9 @@ menu();
                     <div align="right"><span class="intro">Fecha: </span></div>
                  </td>
 			     <td>					  			     			        
-			        <input class="searchbox" name="fechaDesde" type="text" id="fechaDesde" value="'.$fechaDesde.'" maxlength="10" />
+			        <input class="searchbox" name="fechaDesde" type="text" id="fechaDesde" value="'.$fechaDesde.'" maxlength="10" onchange="mostrarViajes();" />
 			        hasta
-			        <input class="searchbox" name="fechaHasta" type="text" id="fechaHasta" value="'.$fechaHasta.'" maxlength="10" />
+			        <input class="searchbox" name="fechaHasta" type="text" id="fechaHasta" value="'.$fechaHasta.'" maxlength="10" onchange="mostrarViajes();" />
                 </td>
             </tr>
             <tr>
@@ -112,139 +112,20 @@ menu();
                     <div align="right"><span class="intro">Cantidad de Lugares: </span></div>
                  </td>
 			     <td>					  			     
-			        <input class="searchbox" name="cantidadLugares" type="text" id="cantidadLugares" value="'.$cantidadLugares.'" maxlength="3" />			        			    
+			        <input class="searchbox" name="cantidadLugares" type="text" id="cantidadLugares" value="'.$cantidadLugares.'" maxlength="3" onchange="mostrarViajes();" />			        			    
                 </td>
             </tr>
             <tr>
                 <td colspan="2"> 
                 &nbsp;
                 </td>
-            </tr>
-            <tr>    
-			    <td colspan="2" align="center">
-	                <input class="searchbutton" type="submit" name="botonContinuar" value="Buscar">	  		  	  
-                </td>
-            </tr>
+            </tr>          
             </table>
-            </form>';
-            
-      /*Si tenemos todos los datos que necesitamos, realizamos la busqueda de viajes.*/
-      if ($camposOk != 0) {
-        echo '<h1>Viajes encontrados</h1>
-            <table cellpadding="1" cellspacing="1" width="100%">
-                <tr Class="tituloColumna">							        
-					<td width="15%">
-	                    Fecha Inicial
-					</td>
-					<td width="15%">
-			            Fecha Final
-				    </td>
-					<td width="10%">
-						Importe
-					</td>					
-					<td width="11%">
-						Lugares Libres
-					</td>					
-					<td width="31%">
-						Conductor
-					</td>							
-					<td width="12%">
-						Sexo
-					</td>		
-					<td width="12%">
-						¿Es Fumador?
-					</td>	
-		        </tr>
-		    ';        
-		if (!($cantidadLibres >= 1)) {
-		    $cantidadLibres = 1;
-	    };
-	    $cantidadResultados = 0;
-	    	                
-        try {                        
-            foreach ($conexion->query("
-                select v.vje_id,
-                    v.vje_fechamenor,
-                    v.vje_fechamayor,
-                    vc.vcr_uio_id,
-                    vc.vcr_importe,
-                    vc.vcr_importeviaje,
-                    vc.vcr_lugareslibres,
-                    u.uio_id,
-                    u.uio_nombreusuario,
-                    u.uio_sexo,
-                    u.uio_esfumador
-                from viaje v
-                inner join recorrido r
-                    on v.vje_rdo_id = r.rdo_id
-                    and ((r.rdo_cad_id_origen = ".$ciudadOrigen." and r.rdo_cad_id_destino = ".$ciudadDestino.")
-                        or (r.rdo_cad_id_origen = ".$ciudadDestino." and r.rdo_cad_id_destino = ".$ciudadOrigen."))
-                inner join viajeconductor vc
-                    on v.vje_id = vc.vcr_vje_id
-                    and vc.vcr_lugareslibres >= ".$cantidadLibres."
-                inner join usuario u
-                    on vc.vcr_uio_id = u.uio_id
-                where v.vje_tipoviaje = 'C'
-                and not (v.vje_fechamenor > '".obtener_string_fecha_bd($fechaHasta)."')
-                and not (v.vje_fechamayor < '".obtener_string_fecha_bd($fechaDesde)."')      
-                    ")
-               as $row) {
-        
-              $cantidadResultados++;        
-              if ($row['VCR_IMPORTE'] > 0) {
-                $descripcionImporte = '$ '.$row['VCR_IMPORTE'].'/pasajero';
-              } else {
-                $descripcionImporte = '$ '.$row['VCR_IMPORTEVIAJE'];
-              };
-              if ($row['UIO_SEXO'] == 'M') {
-                $descripcionSexo = 'Hombre';
-              } else {
-                $descripcionSexo = 'Mujer';
-              };
-              if ($row['UIO_ESFUMADOR'] == '1') {
-                $descripcionEsFumador = 'Sí';
-              } else {
-                $descripcionEsFumador = 'No';
-              };
-              
-              echo '
-                <tr class="filaResultado">							        
-					<td>
-	                    '.$row['VJE_FECHAMENOR'].'
-					</td>
-					<td>
-			            '.$row['VJE_FECHAMAYOR'].'
-				    </td>
-					<td>
-						'.$descripcionImporte.'
-					</td>					
-					<td>
-						'.$row['VCR_LUGARESLIBRES'].'
-					</td>					
-					<td>
-						'.$row['UIO_NOMBREUSUARIO'].'
-					</td>							
-					<td>
-						'.$descripcionSexo.'
-					</td>		
-					<td>
-						'.$descripcionEsFumador.'
-					</td>	
-		        </tr>
-		            ';
-                  
-           };                            
-        } catch (PDOException $e) {  
-            echo '<H3>Error de Base de Datos: '.$e->getMessage().'</h3>';                
-        };
-        echo '</table>             
-             ';
-        if ($cantidadResultados == 0) {
-            echo '
-              <h3><center>No se encontraron viajes con esas características.<BR>Por favor, cargue un pedido de viaje.</center></h3>              
-              ';
-        };
-      };                               
+            </form>
+            <h1>Viajes encontrados</h1>
+            <div id="divViajesEncontrados">
+            ';
+                              
       cerrarConexion($conexion);
 
 ?>
