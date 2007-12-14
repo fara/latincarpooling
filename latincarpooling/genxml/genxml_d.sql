@@ -24,40 +24,26 @@
 -- warranty.                                                          */
 --                                                                    */
 -- ********************************************************************/
-DROP TABLE employee;
-DROP ROW TYPE address_t RESTRICT;
+DROP FUNCTION genxmlversion();
+DROP FUNCTION genxml(LVARCHAR, ROW);
+DROP FUNCTION genxml(ROW);
+DROP FUNCTION genxml(LVARCHAR, LVARCHAR);
+DROP FUNCTION genxmlhdr(LVARCHAR, LVARCHAR);
+DROP FUNCTION addxmlhdr(LVARCHAR, LVARCHAR);
+DROP AGGREGATE aggrxml;
+DROP FUNCTION init_aggrxml(ROW, LVARCHAR);
+DROP FUNCTION iter_aggrxml(aggrxml_t, ROW);
+DROP FUNCTION comb_aggrxml(aggrxml_t, aggrxml_t);
+DROP FUNCTION final_aggrxml(aggrxml_t);
+DROP TYPE aggrxml_t RESTRICT;
+DROP CAST (genxml_t AS lvarchar);
+DROP FUNCTION castgenxml_t(genxml_t);
+DROP TYPE genxml_t RESTRICT;
+DROP TABLE genxmlinfo;
+DROP FUNCTION genxsl(LVARCHAR, LVARCHAR, ROW);
+DROP FUNCTION gendtd(LVARCHAR, LVARCHAR, ROW);
 
-CREATE ROW TYPE address_t (
-  address1 varchar(20),
-  address2 varchar(20),
-  city     varchar(15),
-  state    char(2),
-  zipcode  char(5)
-);
-
-CREATE TABLE employee (
-  name     varchar(20),
-  address  address_t,
-  phone    varchar(18)
-);
-INSERT INTO employee
-VALUES("Roy",
-       ROW("123 first street", NULL, "Denver", "CO", "80111")::address_t,
-       "303-555-1212");
--- EXECUTE FUNCTION set_tracing("myclass", 60, "/tmp/trace.pl");
-
-SELECT genxml("employee", employee) FROM employee;
-
-CREATE TABLE suggest (
-  suggest_id serial8,
-  title VARCHAR(255),
-  PRIMARY KEY  (suggest_id)
-)
-
-select *
-from suggest
-insert into suggest (title) values ('arrogancia')
-
-SELECT title suggest FROM suggest WHERE title like 'ar%' ORDER BY title
-
-SELECT genxml('titulos', row(title))  FROM suggest WHERE title like 'ar%' ORDER BY title
+{
+DROP FUNCTION set_tracing(lvarchar, int, lvarchar);
+DELETE FROM systraceclasses WHERE name = "myclass";
+}

@@ -1,0 +1,144 @@
+Pasos para crear el ambiente de desarrollo
+------------------------------------------
+0. Crear en el usuario de windows "carpooling" con la contrasena "metallica23".
+    De esta manera no vas a tener problemas al importar la copia de mi base de datos.
+    
+1. Instalar el motor de informix.
+   En la instalacion cuando pide si queremos Role Separation, responder que no.
+   Cuando nos pide crea el nuevo usuario administrador ingresar "informix" y como contraseña "informix".
+   En el nombre del servidor ingresar "ol_guaderio".
+   En lo posible instalar el mismo en un directorio sin espacios como "C:\Informix".
+
+Creacion de la base de datos
+----------------------------
+   
+2. Despues de reiniciar la maquina, hacer el login de windows como el usuario informix.
+
+3. Ir a Menú Inicio\Programas\Informix Dynamic Server 9.40\ol_guaderio Se abrira una ventana de linea de comandos.
+
+4. Ingresar a dbaccess.
+
+5. Crear la base de datos "produccion" con la siguiente sentencia:
+
+    CREATE DATABASE produccion
+	IN sabd_dbs
+	WITH BUFFERED LOG;
+	
+O utilizando el menu de dbaccess que es mas facil. O el serverStudio si se puede hacer.
+
+7. Crear una entrada ODBC para conectarse a la base de datos produccion. Esta va a ser utilizada por PHP, WinSQL
+   y tal vez Server Studio.
+   
+8. Conectarse como "infomix" a la base "Produccion" y ejecutar:
+
+   GRANT DBA TO carpooling;
+   
+9. Salir de dbaccess.
+
+10. Bajar el backup de la base de http://arobirosa.no-ip.org/fernando/bk071207.rar
+    y descomprimirlo en C:\bk071207
+
+11. Desde la linea de comandos, ingresar:
+
+    dbimport -c -i C:\bk071207 produccion
+    
+12. Ahora deberias conectarte con el usuario carpooling y verificar que las tablas tienen datos y que estan los SPs.
+
+Instalacion de Apache
+---------------------
+
+1. Bajar e instalar Apache 2.2.6 de:
+
+    http://arobirosa.no-ip.org/fernando/apache_2.2.6-win32-x86-openssl-0.9.8e.msi
+    
+    Instalar el mismo en el directorio "C:\Apache2.2"
+    
+2. Despues de la instalacion conectarse a http://localhost y verificar que funciona.
+
+
+Instalacion de PHP
+------------------
+1. Bajar e instalar PHP 5.2.5 de:
+
+    http://arobirosa.no-ip.org/fernando/php-5.2.5-win32-installer.msi
+    
+    Instalar el mismo en el directorio "C:\PHP"
+    La instalacion va a fallar con un error pero no te preocupes.
+    
+2. Abrir el archivo "C:\Apache2.2\conf\httpd.conf"
+
+3. Agregar o modificar si ya estan las siguientes lineas:
+
+PHPIniDir "C:/PHP"
+LoadModule php5_module "C:/PHP/php5apache2_2.dll"
+
+4. Abrir el archivo C:/PHP/PHP.ini
+
+5. Buscar todas las lineas que comienzan con "extension=" y ponerles adelante un punto y coma.
+
+6. Descomentar las siguientes lineas:
+
+extension=php_pdo.dll
+extension=php_pdo_odbc.dll
+extension=php_pdo_ibm.dll
+extension=php_pdo_informix.dll
+
+7. Crear un archivo con el siguiente contenido:
+
+<?
+phpinfo()
+?> 
+
+y guardarlo como: "C:\Apache2.2\htdocs\testphp.php"
+
+8. Reiniciar el Apache.
+
+9. Ingresa a "localhost/testphp.php". Te tiene que mostrar una pagina con la configuracion de PHP y con un modulo
+   llamado PDO_informix.
+   
+Instalacion del Sitio Web
+-------------------------
+
+1. Bajar y descomprimir a C:\carpoolingwebsite el siguiente archivo:
+
+    http://arobirosa.no-ip.org/fernando/carpoolingwebsite20071207.rar
+
+2. Abrir el archivo "C:\Apache2.2\conf\httpd.conf"
+
+3. Modificar la linea que dice DocumentRoot, tiene que quedar:
+
+    DocumentRoot "C:/carpoolingwebsite"
+    
+4. Modificar la linea que dice "<Directory "C:/Apache2.2/htdocs">", tiene que quedar:
+
+    <Directory "C:/carpoolingwebsite">
+
+5. Reinciar el Apache.
+
+6. Ingresa a "localhost/testphp.php". Te tiene que mostrar una pagina con la configuracion de PHP y con un modulo
+   llamado PDO_informix.
+
+    C:\Apache2.2\htdocs
+
+7. Abri el archivo C:\carpoolingwebsite\func_lib.php y cambia en la linea "new PDO(", los datos de conexion.
+   Hay qeu hacer lo mismo con la otra funcion.
+   
+8. Ahora tenes que conectarte a localhost/login.php y tendrias que poder conectarte con el ususario "tester" y 
+   la contraseña "guionbajo".
+   
+Instalacion de la libreria XML
+------------------------------
+    
+1. Bajar y descomprimir a C:\informix\extend\genxml el siguiente archivo:
+
+    http://arobirosa.no-ip.org/fernando/genxmlwin20071207.rar
+    
+2. Abrir el archivo C:\informix\extend\genxml\genxml.sql y correr cada una de las lineas
+   que comienzan con "create function". Si las funciones ya existen, vas a tener que hacer
+   un drop function.
+   
+   Las ultimas lineas que estan encerradas en llaves, no hay qeu correrlas. 
+   
+3. Cuando termines, corre cada uno de los ejemplos para verificar que todas las funciones andan.
+
+4. Ingresa a "localhost/ajax_listapaises.php" te tiene que traer un XML si funciona todo bien.

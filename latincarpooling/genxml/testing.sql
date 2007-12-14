@@ -24,40 +24,60 @@
 -- warranty.                                                          */
 --                                                                    */
 -- ********************************************************************/
-DROP TABLE employee;
-DROP ROW TYPE address_t RESTRICT;
 
-CREATE ROW TYPE address_t (
-  address1 varchar(20),
-  address2 varchar(20),
-  city     varchar(15),
-  state    char(2),
-  zipcode  char(5)
-);
+SELECT genxml("customer", customer)
+FROM customer WHERE customer_num = 101;
 
-CREATE TABLE employee (
-  name     varchar(20),
-  address  address_t,
-  phone    varchar(18)
-);
-INSERT INTO employee
-VALUES("Roy",
-       ROW("123 first street", NULL, "Denver", "CO", "80111")::address_t,
-       "303-555-1212");
--- EXECUTE FUNCTION set_tracing("myclass", 60, "/tmp/trace.pl");
+SELECT genxml("customer", ROW(customer_num, fname, lname))
+FROM customer WHERE customer_num = 101;
 
-SELECT genxml("employee", employee) FROM employee;
+SELECT genxml("customer",
+        ROW(A.customer_num, fname, lname, call_dtime, call_code,
+            call_descr, res_dtime, res_dtime, res_descr)
+       )
+FROM customer a, cust_calls b
+WHERE a.customer_num = b.customer_num;
 
-CREATE TABLE suggest (
-  suggest_id serial8,
-  title VARCHAR(255),
-  PRIMARY KEY  (suggest_id)
-)
+SELECT genXML("stats", ROW(customer_num, COUNT(*)))
+FROM cust_calls
+GROUP BY customer_num;
 
-select *
-from suggest
-insert into suggest (title) values ('arrogancia')
+DROP PROCEDURE xmlcustomerset();
 
-SELECT title suggest FROM suggest WHERE title like 'ar%' ORDER BY title
+CREATE PROCEDURE xmlcustomerset()
+RETURNING LVARCHAR
+DEFINE result LVARCHAR;
+DEFINE ressql LVARCHAR;
 
-SELECT genxml('titulos', row(title))  FROM suggest WHERE title like 'ar%' ORDER BY title
+LET result = '<?xml version="1.0" encoding="ISO-8859-1" ?>';
+LET result = result ||
+    '<!DOCTYPE customer_set SYSTEM "/home/dtd/customer_set.dtd">';
+LET result = result ||
+    '<?xml-stylesheet type="text/xsl" href="/home/xsl/customer_set.xsl" ?>';
+LET result = result || "<customer_set>";
+
+
+FOREACH SELECT genxml("customer", customer) INTO ressql FROM customer
+        WHERE customer_num = 101
+  LET result = result || ressql;
+END FOREACH;
+LET result = result || "</customer_set>";
+RETURN result;
+END PROCEDURE;
+
+EXECUTE PROCEDURE xmlcustomerset();
+
+EXECUTE FUNCTION
+  addxmlhdr("customer_set", 
+  "SELECT genxml('customer', customer) FROM customer WHERE customer_num = 101");
+
+EXECUTE FUNCTION
+  genxml("customer_set", "SELECT * FROM customer WHERE customer_num = 101");
+
+EXECUTE FUNCTION
+  genxmlhdr("customer_set", "SELECT * FROM customer WHERE customer_num = 101");
+
+SELECT aggrxml(customer, "customer_set")
+FROM customer
+WHERE customer_num = 101;
+

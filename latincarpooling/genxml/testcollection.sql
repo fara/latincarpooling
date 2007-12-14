@@ -24,40 +24,25 @@
 -- warranty.                                                          */
 --                                                                    */
 -- ********************************************************************/
-DROP TABLE employee;
-DROP ROW TYPE address_t RESTRICT;
 
-CREATE ROW TYPE address_t (
-  address1 varchar(20),
-  address2 varchar(20),
-  city     varchar(15),
-  state    char(2),
-  zipcode  char(5)
+CREATE TABLE mytab (
+ col1 int,
+ col2 multiset(int not null),
+ col3 multiset(row(a int, b varchar(10)) not null)
 );
+INSERT INTO mytab
+  VALUES(1, "multiset{2, 3, 4}", "multiset{ROW(2, 'two'), ROW(3, 'three')}" );
+SELECT * FROM mytab;
+SELECT genxml("mytab", mytab) FROM mytab;
+SELECT genxsl("mytab_set", "mytab", mytab) FROM mytab
+  WHERE col1 = 1;
+SELECT gendtd("mytab_set", "mytab", mytab) FROM mytab
+  WHERE col1 = 1;
+DROP TABLE mytab;
 
-CREATE TABLE employee (
-  name     varchar(20),
-  address  address_t,
-  phone    varchar(18)
-);
-INSERT INTO employee
-VALUES("Roy",
-       ROW("123 first street", NULL, "Denver", "CO", "80111")::address_t,
-       "303-555-1212");
--- EXECUTE FUNCTION set_tracing("myclass", 60, "/tmp/trace.pl");
-
-SELECT genxml("employee", employee) FROM employee;
-
-CREATE TABLE suggest (
-  suggest_id serial8,
-  title VARCHAR(255),
-  PRIMARY KEY  (suggest_id)
-)
-
-select *
-from suggest
-insert into suggest (title) values ('arrogancia')
-
-SELECT title suggest FROM suggest WHERE title like 'ar%' ORDER BY title
-
-SELECT genxml('titulos', row(title))  FROM suggest WHERE title like 'ar%' ORDER BY title
+SELECT genxml("cust_call" , ROW(fname, lname,
+  MULTISET(SELECT user_id, call_code
+           FROM cust_calls cc
+           WHERE cc.customer_num = c.customer_num)))
+FROM customer c
+WHERE lname = "Parmelee";
